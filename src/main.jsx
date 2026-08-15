@@ -89,6 +89,49 @@ function replaceHardcodedData(doc, user) {
   })
 }
 
+// ─── Replace USD prices with TZS in services table ────────
+async function replacePricesWithTZS(doc) {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const resp = await fetch('/api/services', { headers: { Authorization: `Bearer ${token}` } })
+    if (!resp.ok) return
+    const data = await resp.json()
+    if (!data.services) return
+
+    // Build map: service_id → rate_tzs
+    const priceMap = {}
+    for (const s of data.services) {
+      priceMap[s.service] = s.rate_tzs
+    }
+
+    // Replace $X.XX prices in table cells with TSH amounts
+    doc.querySelectorAll('table tr').forEach((row) => {
+      const idEl = row.querySelector('[data-filter-table-service-id], .order_id')
+      if (!idEl) return
+      const serviceId = idEl.textContent.trim() || idEl.getAttribute('data-filter-table-service-id')
+      const tzsRate = priceMap[serviceId]
+      if (!tzsRate) return
+
+      // Find the <td> with dollar amount (rate per 1000)
+      row.querySelectorAll('td').forEach((td) => {
+        const text = td.textContent.trim()
+        if (/^\$[\d.]+$/.test(text)) {
+          td.textContent = `TSH ${tzsRate.toLocaleString()}`
+        }
+      })
+
+      // Fix onclick handlers like showDetails(id,min,max,'$0.14')
+      row.querySelectorAll('[onclick]').forEach((el) => {
+        const onclick = el.getAttribute('onclick')
+        if (onclick && onclick.includes('$')) {
+          el.setAttribute('onclick', onclick.replace(/\$[\d.]+/g, `TSH ${tzsRate.toLocaleString()}`))
+        }
+      })
+    })
+  } catch {}
+}
+
 function Page() {
   const [html, setHtml] = useState('')
   const [pendingHtml, setPendingHtml] = useState('')
@@ -163,6 +206,9 @@ function Page() {
         // Replace hardcoded user data with actual logged-in user info
         const user = await fetchCurrentUser()
         if (user) replaceHardcodedData(document, user)
+
+        // Replace USD prices with TZS (3x markup) in services tables
+        await replacePricesWithTZS(document)
 
         const stylesheetUrls = [...document.querySelectorAll('link[rel="stylesheet"]')]
           .map((link) => localAsset(link.getAttribute('href')))
