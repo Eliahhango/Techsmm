@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Add funds</title>
+  <title>Orders</title>
   <meta name="keywords" content="">
   <meta name="description" content="">
     <link rel="shortcut icon" type="image/ico" href="https://storage.perfectcdn.com/hmz1fi/21ogy6qcanfxi539.ico" />
@@ -69,7 +69,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link href="https://storage.perfectcdn.com/global/yo7jjbt9bz8u4xk0.js" rel="preload" as="script">
 <link href="https://storage.perfectcdn.com/global/kkj76ozsjok1zzlw.js" rel="preload" as="script">
 <link href="https://storage.perfectcdn.com/global/tlrgcybojkfxdlfj.js" rel="preload" as="script">
-<link href="https://storage.perfectcdn.com/global/e6hc6sxefjmpzjwg.js" rel="preload" as="script">
 <link href="https://storage.perfectcdn.com/hmz1fi/5rlpuzscp8ism29e.js" rel="preload" as="script">
 <link href="https://storage.perfectcdn.com/hmz1fi/farxtjet462wr6bi.js" rel="preload" as="script">
 
@@ -167,7 +166,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
           </a>
           
-                              <a href="/orders" class="menu_item " >
+                              <a href="/orders" class="menu_item active" >
                         <div class="menu_icon">
               <i class="fas fa-history"></i>
             </div>
@@ -205,7 +204,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
           </a>
           
-                              <a href="/addfunds" class="menu_item active" >
+                              <a href="/addfunds" class="menu_item " >
                         <div class="menu_icon">
               <i class="fas fa-hand-holding-usd"></i>
             </div>
@@ -377,131 +376,84 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         </div>
         <!-- // page and other top info -->
-        <!-- New Orders Part -->
-<div class="def_wraper">
-  <div class="container-fluid">
-      <div class="row">
+        <section id="defOrder">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card_v2">
+                    <div class="card-body">
+                        <form action="/orders" method="get" id="history-search">
+                            <div class="input-group">
+                              <input type="text" name="search" class="form-control" value=""
+                                     placeholder="Search">
+                              <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>
+                              </span>
+                            </div>
+                          </form>
+                    </div>
+                </div>
+                <div class="card card_v2">
+                    <div class="card-body">
+                        <nav class="nav nav-pills flex-column flex-sm-row gap-2" id="orders_menu">
 
-          <div class="col-md-6">
-              <div class="card card_v2 mb-3">
-            <div class="card-body">
-                <h6 class="text-center text-bold">
-                  How to Deposit Through BKASH, Rocket, Nagad on techsmm.com
-                </h6>
-                <div class="text-center">
-                  <a href="https://www.youtube.com/watch?v=l5r_BuKp898&ab_channel=TechSMM" target="_blank" class="btn btn-primary" style="padding: 10px 30px; font-size:16px;">WATCH VIDEO</a>
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders"><span class="icon"><i class="fas fa-list"></i></span>All</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/pending"><span class="icon"><i class="far fa-pause-circle"></i></span>Pending</a>
+
+
+                            <a class="flex-sm-fill text-sm-center nav-link  " href="/orders/inprogress"><span class="icon"><i class="fas fa-redo"></i></span>In progress</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/completed"><span class="icon"><i class="fas fa-check-double"></i></span>Completed</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/partial"><span class="icon"><i class="fas fa-check"></i></span>Partial</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link active" href="/orders/processing"><span class="icon"><i class="fas fa-chart-line"></i></span>Processing</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/canceled"><span class="icon"><i class="far fa-times-circle"></i></span>Canceled</a>
+                          </nav>
+                    </div>
                 </div>
             </div>
-          </div> 
-              <div class="card card_v2">
-                  <div class="card-body">
-                      <div id="newOrderTabsWrap">
-                          <ul class="nav nav-pills tab_btn_wrap mb-3" id="pills-tab" role="tablist">
-                                                            <li class="nav-item" role="presentation">
-                                  <button class="nav-link active" id="pills-order-tab" data-bs-toggle="pill"
-                                      data-bs-target="#pills-order" type="button" role="tab"
-                                      aria-controls="pills-order" aria-selected="true"><i
-                                          class="far fa-credit-card"></i> Add Fund</button>
-                              </li>
-                                                            <li class="nav-item" role="presentation">
-                                  <button class="nav-link" id="pills-favorite-tab" data-bs-toggle="pill"
-                                      data-bs-target="#pills-favorite" type="button" role="tab"
-                                      aria-controls="pills-favorite" aria-selected="false"> <i
-                                          class="fas fa-redo-alt"></i> Fund History</button>
-                              </li>
-                          </ul>
-                      </div>
-                      <div class="tab-content tab_wrap" id="pills-tabContent">
-                                                    <div class="tab-pane fade show active" id="pills-order" role="tabpanel"
-                              aria-labelledby="pills-order-tab">
-                              <form  method="post" action="">
-                                                                                                      <div class="form-group">
-                                      <label for="method" class="control-label">Method</label>
-                                      <select class="form-control form-select" id="method" name="AddFoundsForm[type]"
-                                          id="order_type">
-                                                                                    <option value="182674" >𝗕𝗶𝗻𝗮𝗻𝗰𝗲 𝗣𝗮𝘆 - Auto | Min 1$ | %𝟱 𝗕𝗢𝗡𝗨𝗦 𝗢𝗡 𝗔𝗟𝗟 𝗣𝗔𝗬𝗠𝗘𝗡𝗧𝗦! | $1k=6%</option>
-                                                                                    <option value="170010" >Cryptomus - Auto | 1$ | %𝟱 𝗕𝗢𝗡𝗨𝗦 𝗢𝗡 𝗔𝗟𝗟 𝗣𝗔𝗬𝗠𝗘𝗡𝗧𝗦! </option>
-                                                                                    <option value="178309" >𝗕𝗸𝗮𝘀𝗵 | 𝗡𝗼𝗴𝗼𝗱 | 𝗥𝗼𝗰𝗸𝗲𝘁 | Auto - Min 0.2$ | For Bangladesh Users | %𝟱 𝗕𝗢𝗡𝗨𝗦 𝗢𝗡 𝗔𝗟𝗟 𝗣𝗔𝗬𝗠𝗘𝗡𝗧𝗦! | $1k=6%</option>
-                                                                                    <option value="110325" >𝗠𝗮𝗻𝘂𝗮𝗹 𝗣𝗮𝘆𝗺𝗲𝗻𝘁 | Minimum 100$ | USDT - Trc20 , BP20 | %𝟱 𝗕𝗢𝗡𝗨𝗦 𝗢𝗡 𝗔𝗟𝗟 𝗣𝗔𝗬𝗠𝗘𝗡𝗧𝗦! | $1k=6%</option>
-                                                                                </select>
-                                  </div>
-                                  <div class="form-group">
-                                      <label for="amount" class="control-label">Amount</label>
-                                      <input type="number" class="form-control" name="AddFoundsForm[amount]"
-                                          id="amount">
-                                  </div>
-                                                                    <input type="hidden" name="_csrf" value="NlBm3H3pFE9dKi88vRMCPz5QipPg2J_BcucT8vnZ9JRcHgqdKq9BKwdeXg3oe09XbD7S0b_g9opHiFaKiJaO4A==">
-                                  <button type="submit" class="btn btn-primary d-block w-100">Pay</button>
-                              </form>
-                          </div>
-                                                    <div class="tab-pane fade" id="pills-favorite" role="tabpanel"
-                              aria-labelledby="pills-favorite-tab">
-                              <table class="table" id="addfundTable">
-                                  <thead>
-                                      <tr>
-                                          <th scope="col">ID</th>
-                                          <th scope="col">Date</th>
-                                          <th scope="col">Method</th>
-                                          <th scope="col">Amount</th>
-                                      </tr>
-                                  </thead>
-                                  <tbody>
-                                                                            <tr>
-                                          <td>
-                                              <span class="tab_id">228254</span>
-                                          </td>
-                                          <td><span class="tab_date">2026-05-27 19:37:05</span></td>
-                                          <td><span class="tab_focus">Bonus</span></td>
-                                          <td>
-                                              <div class="tab_amount">
-                                                                                                    0.05
-                                                                                                </div>
-                                          </td>
-                                      </tr>
-                                                                            <tr>
-                                          <td>
-                                              <span class="tab_id">228253</span>
-                                          </td>
-                                          <td><span class="tab_date">2026-05-27 19:37:01</span></td>
-                                          <td><span class="tab_focus">𝗕𝗶𝗻𝗮𝗻𝗰𝗲 𝗣𝗮𝘆 - Auto | Min 1$ | %𝟱 𝗕𝗢𝗡𝗨𝗦 𝗢𝗡 𝗔𝗟𝗟 𝗣𝗔𝗬𝗠𝗘𝗡𝗧𝗦! | $1k=6%</span></td>
-                                          <td>
-                                              <div class="tab_amount">
-                                                                                                    1.00
-                                                                                                </div>
-                                          </td>
-                                      </tr>
-                                                                        </tbody>
-                              </table>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
+        </div>
+    </div>
+</section>
 
-          <div class="col-md-6">
-              <div class="card card_v2">
-                  <div class="card-body">
-                      <div id="newOrderTabsWrap">
-                          <ul class="nav nav-pills tab_btn_wrap mb-3" id="pills-tab" role="tablist">
-                              
-                          </ul>
-                      </div>
-                      <div id="def_side_content">
-                          <div class="accordion paymentpage site_accordion" id="accordionExample">
-                              <div class="table-responsive addfund_responsive">
-                                 
-                              </div>
+<section id="table">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+               <div class="card card_v2">
+                   <div class="card-body">
+                        <div class="responsive-table def_table">
+                            <div class="table-responsive">
+                                <table class="table order_page" id="service-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Link</th>
+                                            <th scope="col">Charge</th>
+                                            <th scope="col">Start count</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Service</th>
+                                            <th scope="col">Remains</th>
+                                            <th scope="col">Status</th>
+                                                                                        <th scope="col">Quick Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                            </tbody>
+                                </table>
+                                                            </div>
+                    </div>
+                   </div>
+               </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                          </div>
-
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
-<!-- // New Orders Part -->
       </div>
     </div>
   </main>
@@ -778,17 +730,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </script>
     <script type="text/javascript"  src="https://storage.perfectcdn.com/global/tlrgcybojkfxdlfj.js" >
       </script>
-    <script type="text/javascript"  src="https://storage.perfectcdn.com/global/e6hc6sxefjmpzjwg.js" >
-      </script>
     <script type="text/javascript"  src="https://storage.perfectcdn.com/hmz1fi/5rlpuzscp8ism29e.js" >
       </script>
     <script type="text/javascript"  src="https://storage.perfectcdn.com/hmz1fi/farxtjet462wr6bi.js" >
       </script>
     <script type="text/javascript" >
-        window.modules.layouts = {"theme_id":1,"auth":1,"live":true,"csrftoken":"NlBm3H3pFE9dKi88vRMCPz5QipPg2J_BcucT8vnZ9JRcHgqdKq9BKwdeXg3oe09XbD7S0b_g9opHiFaKiJaO4A=="};
+        window.modules.layouts = {"theme_id":1,"auth":1,"live":true,"csrftoken":"kfOCxFYXZgqpcM8JPSW8xVzsBdF1tg8eJ_aEQ25MOob7ve6FAVEzbvMEvjhoTfGtDoJdkyqOZlUSmcE7HwNA8g=="};
       </script>
     <script type="text/javascript" >
-        window.modules.paymentMethods = {"format":{"min_price":0.0001,"max":7,"min":2,"delimiter":".","thousands":"","balance_format":4},"fieldOptions":{"182674":{"commission":{"is_enabled":0,"fixed":0,"percent":0,"type":"extra_fee_enabled","extrafee":"Extra fee","total":"Total"},"instruction":{"label":"Instruction","name":"instruction","type":"container","value":"<p><span class=\"x3jgonx\" style=\"white-space-collapse: preserve;\">%\ud835\udff1 \ud835\uddd5\ud835\udde2\ud835\udde1\ud835\udde8\ud835\udde6 \ud835\udde2\ud835\udde1 \ud835\uddd4\ud835\udddf\ud835\udddf \ud835\udde3\ud835\uddd4\ud835\uddec\ud835\udde0\ud835\uddd8\ud835\udde1\ud835\udde7\ud835\udde6! | 6% Bonus From 1k$ | 7% Bonus From 10k$ | 8% Bonus From 20k$ | 10% Bonus From 30k$<\/span><\/p>","texts":[]}},"170010":{"commission":{"is_enabled":0,"fixed":0,"percent":0,"type":"extra_fee_enabled","extrafee":"Extra fee","total":"Total"},"instruction":{"label":"Instruction","name":"instruction","type":"container","value":"<p><span style=\"white-space-collapse: preserve;\">%\ud835\udff1 \ud835\uddd5\ud835\udde2\ud835\udde1\ud835\udde8\ud835\udde6 \ud835\udde2\ud835\udde1 \ud835\uddd4\ud835\udddf\ud835\udddf \ud835\udde3\ud835\uddd4\ud835\uddec\ud835\udde0\ud835\uddd8\ud835\udde1\ud835\udde7\ud835\udde6!<\/span><\/p>","texts":[]}},"178309":{"commission":{"is_enabled":1,"fixed":null,"percent":6,"type":"extra_fee_enabled","extrafee":"Extra fee","total":"Total"},"amount_converted":{"label":"Amount","type":"input","value":""},"instruction":{"label":"Instruction","name":"instruction","type":"container","value":"<p><span style=\"white-space-collapse: preserve;\"> \u09af\u09c7 \u0995\u09cb\u09a8 \u09aa\u09cd\u09b0\u09df\u09cb\u099c\u09a8\u09c7 \u09ae\u09c7\u09b8\u09c7\u099c \u0995\u09b0\u09c1\u09a8\u0983                                                     <\/span><br><span style=\"white-space-collapse: preserve;\">         What's App<\/span><br><span style=\"white-space-collapse: preserve;\">Minimal payment: 0.2$<\/span><br><span style=\"white-space-collapse: preserve;\">Maximal payment: $1000<\/span><br><br><span class=\"x3jgonx\" style=\"white-space-collapse: preserve;\">%\ud835\udff1 \ud835\uddd5\ud835\udde2\ud835\udde1\ud835\udde8\ud835\udde6 \ud835\udde2\ud835\udde1 \ud835\uddd4\ud835\udddf\ud835\udddf \ud835\udde3\ud835\uddd4\ud835\uddec\ud835\udde0\ud835\uddd8\ud835\udde1\ud835\udde7\ud835\udde6! | 6% Bonus From 1k$ | 7% Bonus From 10k$ | 8% Bonus From 20k$ | 10% Bonus From 30k$<\/span><\/p>","texts":[]}},"110325":{"commission":{"is_enabled":0,"fixed":0,"percent":0,"type":"extra_fee_enabled","extrafee":"Extra fee","total":"Total"},"instruction":{"label":"Instruction","name":"instruction","type":"container","value":"<h4 style=\"text-align: center;\"><span style=\"white-space-collapse: preserve;\">Follow the Steps <\/span><\/h4><h5 style=\"text-align: center;\"><span style=\"white-space-collapse: preserve;\">Send a minimum of 100$ or more <\/span><\/h5><h4 style=\"text-align: center;\"><span style=\"white-space-collapse: preserve;\"> <\/span><\/h4><h4 style=\"text-align: center;\"><b><span style=\"white-space-collapse: preserve; font-size: 14px;\">Trc20 Address -<\/span><span style=\"white-space-collapse: preserve; font-size: 14px;\">  <\/span><span style=\"color: inherit; font-family: inherit; white-space-collapse: preserve; font-size: 14px;\">TVokrzCMKh4D8AKwWgvv6fetbAUdTDUaYo<\/span><span style=\"color: inherit; font-family: inherit; white-space-collapse: preserve;\">  <\/span><\/b><span style=\"color: inherit; font-family: inherit; white-space-collapse: preserve; font-size: 14px;\"><b>  <\/b><\/span><a href=\"https:\/\/storage.perfectcdn.com\/hmz1fi\/td4k4l2mhmhaq07i.jpg\" target=\"_blank\">Trc20 QR<\/a><span style=\"color: inherit; font-family: inherit; white-space-collapse: preserve; font-size: 14px;\">\r\n\r\n<\/span><span style=\"white-space-collapse: preserve;\">BP20 Address - 0xf7063343999fa6edace20df5b255e8a248f0cd82 <\/span><a href=\"https:\/\/storage.perfectcdn.com\/hmz1fi\/ygwemyl1swqwtnt9.jpg\" target=\"_blank\">BP20 QR<\/a><\/h4><h4 style=\"text-align: center;\"><br><span style=\"color: inherit; font-family: inherit; white-space-collapse: preserve; font-size: 14px;\"><\/span><\/h4><h5 style=\"text-align: center;\"><span class=\"x3jgonx\" style=\"white-space-collapse: preserve;\">%\ud835\udff1 \ud835\uddd5\ud835\udde2\ud835\udde1\ud835\udde8\ud835\udde6 \ud835\udde2\ud835\udde1 \ud835\uddd4\ud835\udddf\ud835\udddf \ud835\udde3\ud835\uddd4\ud835\uddec\ud835\udde0\ud835\uddd8\ud835\udde1\ud835\udde7\ud835\udde6! | 6% Bonus From 1k$ | 7% Bonus From 10k$ | 8% Bonus From 20k$ | 10% Bonus From 30k$<\/span><\/h5><h5 style=\"text-align: center;\"><span style=\"white-space-collapse: preserve;\"><br><\/span><br><\/h5><h5 style=\"text-align: center;\"><span style=\"white-space-collapse: preserve;\">After Sending Payment, knock us in WhatsApp (+8801708924551) with the below Info<br><\/span><span style=\"white-space-collapse: preserve;\">1. Binance Pay ID: xxxxxxxxx  <br><\/span><span style=\"white-space-collapse: preserve;\">2. Amount: xxx<br><\/span><span style=\"white-space-collapse: preserve;\">3. Confirmation <\/span><span style=\"white-space-collapse: preserve;\">Payment<\/span><span style=\"white-space-collapse: preserve; color: inherit; font-family: inherit;\"> Screenshot<\/span><\/h5><div style=\"text-align: center;\"><h5 style=\"font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; color: rgb(223, 224, 225);\"><br><\/h5><span style=\"white-space-collapse: preserve;\"><br><\/span><\/div>","texts":[]}}},"amountOptions":[],"amountCurrencyOptions":[],"convertAmountOptions":{"panel_currency":"USD","method_currencies":{"178309":"BDT"},"currency_rates":{"BDT":{"result_currency":"BDT","source_rate":"1.00000","result_rate":"122.60685"}},"precision":4},"options":{"182674":{"code":"binance_pay_gateway","type":182674,"modal":{"modal_title":"Binance internal transfer","currency":"USDT","confirm_label":"Confirm payment","verify_label":"Verify payment","done_label":"Done","uuid_input_label":"Send to Binance ID","pay_instruction":"<p>1. Scan the QR using the Binance app or send funds using the Binance ID.<\/p>\n<p>2. After completing the payment tap \"Confirm payment\".<\/p>","verify_instruction":"<p>1. Copy the Order ID from the successful payment details in your Binance account.<\/p>\n<p>2. Paste it into the field above and tap \"Verify payment\".<\/p>","order_id_label":"Enter you Binance Order ID"}},"110325":{"code":"manual_243","type":110325}},"su":false};
+        window.modules.siteOrdersList = {"pageUrl":"\/orders"};
       </script>
     <script type="text/javascript" >
         window.modules.user_app_show_config = [];
