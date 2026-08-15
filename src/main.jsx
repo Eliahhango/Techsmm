@@ -6,7 +6,8 @@ const SITE_ROOT = new URL('site/techsmm.com/', window.location.href).pathname
 
 function sourceForPath(pathname, search = '') {
   if (pathname === '/' || pathname === '') return 'index.html'
-  const clean = pathname.replace(/^\/+/, '').replace(/^Techsmm\//i, '')
+  let clean = pathname.replace(/^\/+/, '').replace(/^(?:Techsmm|techsmm\.com)\//i, '')
+  clean = clean.replace(/^services\.html\//i, '')
   if (clean === 'blog') {
     const page = new URLSearchParams(search).get('page')
     if (page && /^\d+(?:\.html)?$/.test(page)) return `blog-page-${page.replace(/\.html$/, '')}.html`
@@ -121,7 +122,7 @@ function Page() {
     const href = anchor.getAttribute('href')
     if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || /^https?:\/\//i.test(href)) return
     event.preventDefault()
-    const target = new URL(href, `${window.location.origin}/${source}`)
+    const target = new URL(href, window.location.href)
     window.history.pushState({}, '', target.pathname + target.search)
     window.dispatchEvent(new PopStateEvent('popstate'))
   }
