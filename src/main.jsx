@@ -213,6 +213,11 @@ function Page() {
         const stylesheetUrls = [...document.querySelectorAll('link[rel="stylesheet"]')]
           .map((link) => localAsset(link.getAttribute('href')))
           .filter(Boolean)
+        // Inject Bootstrap CSS if not already present (needed for grid/layout)
+        const hasBootstrap = stylesheetUrls.some((u) => u.includes('bootstrap.min.css'))
+        if (!hasBootstrap) {
+          stylesheetUrls.unshift('/site/cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css')
+        }
         const inlineStyles = [...document.querySelectorAll('style')].map((style) => style.textContent)
         setStyles([...stylesheetUrls, ...inlineStyles.map((value) => `inline:${value}`)])
         setPendingHtml(document.body?.innerHTML || markup)
