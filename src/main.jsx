@@ -8,6 +8,8 @@ function sourceForPath(pathname, search = '') {
   if (pathname === '/' || pathname === '') return 'index.html'
   let clean = pathname.replace(/^\/+/, '').replace(/^(?:Techsmm|techsmm\.com)\//i, '')
   clean = clean.replace(/^services\.html\//i, '')
+  clean = clean.replace(/\.html\.html$/i, '.html')
+  if (clean.toLowerCase() === 'blog/index.html') clean = 'blog.html'
   if (clean === 'blog') {
     const page = new URLSearchParams(search).get('page')
     if (page && /^\d+(?:\.html)?$/.test(page)) return `blog-page-${page.replace(/\.html$/, '')}.html`
