@@ -259,9 +259,24 @@ function Page() {
   return <div className="mirrored-page" onClick={navigate} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
+// Clean ugly URLs on load — redirect /techsmm.com/services.html/foo to /foo
+function cleanUrl() {
+  const p = window.location.pathname
+  // Strip /techsmm.com/services.html/ prefix
+  let cleaned = p.replace(/^\/techsmm\.com\/services\.html\//i, '/')
+  // Strip /techsmm.com/ prefix
+  cleaned = cleaned.replace(/^\/techsmm\.com\//i, '/')
+  // Strip trailing .html
+  cleaned = cleaned.replace(/\.html$/i, '')
+  if (cleaned !== p) {
+    window.history.replaceState({}, '', cleaned + window.location.search)
+  }
+}
+
 function App() {
   const [, refresh] = useState(0)
   useEffect(() => {
+    cleanUrl()
     const update = () => refresh((value) => value + 1)
     window.addEventListener('popstate', update)
     return () => window.removeEventListener('popstate', update)
