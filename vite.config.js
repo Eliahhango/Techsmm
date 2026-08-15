@@ -11,7 +11,7 @@ function spaFallback() {
         const url = new URL(req.url, 'http://localhost')
         const pathname = decodeURIComponent(url.pathname)
 
-        if (pathname.startsWith('/@') || pathname.startsWith('/src')) return next()
+        if (pathname.startsWith('/@') || pathname.startsWith('/src') || pathname.startsWith('/api')) return next()
 
         const publicPath = path.join(process.cwd(), 'public', pathname)
         if (fs.existsSync(publicPath) && fs.statSync(publicPath).isFile()) return next()
