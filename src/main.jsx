@@ -23,7 +23,7 @@ function localAsset(url) {
   if (url.startsWith('/site/')) return url
   url = url.replace(/^\/techsmm\.com\/services\.html\//, '/')
   const value = url.replace(/^https?:\/\/[^/]+\//, '').replace(/^\/+/, '').replace(/^\.\//, '').replace(/^(\.\.\/)+/, '')
-  if (value.startsWith('storage.') || value.startsWith('cdn.') || value.startsWith('cdnjs.') || value.startsWith('code.') || value.startsWith('unpkg.')) {
+  if (value.startsWith('storage.') || value.startsWith('cdn.') || value.startsWith('cdnjs.') || value.startsWith('code.') || value.startsWith('unpkg.') || value.startsWith('oss.maxcdn.')) {
     return `/site/${value}`
   }
   return url
