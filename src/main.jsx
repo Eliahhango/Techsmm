@@ -6,7 +6,7 @@ const SITE_ROOT = new URL('site/techsmm.com/', window.location.href).pathname
 
 function sourceForPath(pathname, search = '') {
   if (pathname === '/' || pathname === '') return 'index.html'
-  const clean = pathname.replace(/^\/+/, '')
+  const clean = pathname.replace(/^\/+/, '').replace(/^Techsmm\//i, '')
   if (clean === 'blog') {
     const page = new URLSearchParams(search).get('page')
     if (page && /^\d+(?:\.html)?$/.test(page)) return `blog-page-${page.replace(/\.html$/, '')}.html`
