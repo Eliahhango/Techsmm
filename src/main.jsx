@@ -72,7 +72,10 @@ function Page() {
         document.querySelectorAll('script').forEach((node) => node.remove())
         document.body.querySelectorAll('a[href]').forEach((node) => {
           const original = node.getAttribute('href')
-          const normalized = normalizeRoute(original)
+          const label = node.textContent.trim().toLowerCase()
+          const normalized = label === 'terms & conditions' || label === 'privacy policy'
+            ? '/terms'
+            : normalizeRoute(original)
           if (normalized !== original) node.setAttribute('href', normalized)
         })
         document.body.querySelectorAll('img[src],script[src],source[src],video[src],audio[src],iframe[src]').forEach((node) => {
