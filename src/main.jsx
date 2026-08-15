@@ -50,8 +50,11 @@ function Page() {
       })
       .then((markup) => {
         if (cancelled) return
+        const closingHtml = markup.search(/<\/html>/i)
+        if (closingHtml !== -1) markup = markup.slice(0, closingHtml + 7)
         const document = new DOMParser().parseFromString(markup, 'text/html')
         setTitle(document.title || 'TechSMM')
+        document.querySelectorAll('script').forEach((node) => node.remove())
         document.body.querySelectorAll('img[src],script[src],source[src],video[src],audio[src],iframe[src]').forEach((node) => {
           const original = node.getAttribute('src')
           const local = localAsset(original)
