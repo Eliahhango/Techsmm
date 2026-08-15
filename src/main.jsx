@@ -60,49 +60,32 @@ async function fetchCurrentUser() {
 function replaceHardcodedData(doc, user) {
   if (!user) return
 
-  const replacements = [
-    // Username — replace in h5 tags and other text nodes
-    { find: /elitechwiz/g, replace: user.username },
-    // Balance — replace dollar amounts with TZS balance
-    { find: /\$0\.15/g, replace: `TSH ${Number(user.balance_tzs || 0).toLocaleString()}` },
-    { find: /\$0\.05/g, replace: '' },
-    // Email
-    { find: /hangoeliah@gmail\.com/g, replace: user.email || '' },
-    // User ID
-    { find: /\b13792\b/g, replace: String(user.id || '') },
-  ]
+  // 1. Replace username in sidebar h5 elements
+  doc.querySelectorAll('.v2_user_info h5, .sidebar h5, .user_info h5').forEach((el) => {
+    if (el.textContent.trim() === 'elitechwiz') el.textContent = user.username
+  })
 
-  // Walk all text nodes in the document body
-  const walker = document.createTreeWalker(
-    doc.body,
-    NodeFilter.SHOW_TEXT,
-    null,
-    false
-  )
-  const textNodes = []
-  let node
-  while ((node = walker.nextNode())) {
-    textNodes.push(node)
-  }
-
-  for (const textNode of textNodes) {
-    let changed = false
-    let newText = textNode.textContent
-    for (const r of replacements) {
-      if (r.find.test(newText)) {
-        r.find.lastIndex = 0
-        newText = newText.replace(r.find, r.replace)
-        changed = true
-      }
+  // 2. Replace balance in sidebar balance span only
+  doc.querySelectorAll('.balance, .user_balance .balance').forEach((el) => {
+    const text = el.textContent.trim()
+    if (text.startsWith('$') || text.startsWith('TSH')) {
+      el.textContent = `TSH ${Number(user.balance_tzs || 0).toLocaleString()}`
     }
-    if (changed) textNode.textContent = newText
-  }
+  })
 
-  // Also replace in input values (for forms with pre-filled email, etc.)
-  doc.querySelectorAll('input[type="email"], input[type="text"]').forEach((input) => {
-    const val = input.value
-    if (val === 'hangoeliah@gmail.com') input.value = user.email || ''
-    if (val === 'elitechwiz') input.value = user.username || ''
+  // 3. Replace email in info cards
+  doc.querySelectorAll('.user_info h4, .text_info h4').forEach((el) => {
+    if (el.textContent.trim() === 'hangoeliah@gmail.com') el.textContent = user.email || ''
+  })
+
+  // 4. Replace user ID in info cards
+  doc.querySelectorAll('.user_info h4, .text_info h4').forEach((el) => {
+    if (el.textContent.trim() === '13792') el.textContent = String(user.id || '')
+  })
+
+  // 5. Replace fav_user_name in any remaining inline scripts
+  doc.querySelectorAll('script').forEach((el) => {
+    el.textContent = el.textContent.replace(/fav_user_name\s*=\s*"[^"]*"/, `fav_user_name = "${user.username}"`)
   })
 }
 
@@ -253,6 +236,75 @@ function Page() {
     window.history.pushState({}, '', target)
     window.dispatchEvent(new PopStateEvent('popstate'))
   }
+
+  // After HTML renders, intercept forms and inject auth bridge
+  useEffect(() => {
+    if (!ready) return
+    const page = document.querySelector('.mirrored-page')
+    if (!page) return
+
+    // Intercept all form submissions — route to backend API
+    function handleFormSubmit(e) {
+      const form = e.target
+      if (!form || form.tagName !== 'FORM') return
+      e.preventDefault()
+      e.stopPropagation()
+
+      const action = (form.getAttribute('action') || '').toLowerCase()
+      const fields = {}
+      new FormData(form).forEach((val, key) => { fields[key] = val })
+
+      // Signup form
+      if (action.includes('signup') || fields['RegistrationForm[login]'] !== undefined) {
+        const username = fields['RegistrationForm[login]'] || ''
+        const email = fields['RegistrationForm[email]'] || ''
+        const password = fields['RegistrationForm[password]'] || ''
+        fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.token) {
+              localStorage.setItem('token', data.token)
+              window.history.pushState({}, '', '/dashboard')
+              window.dispatchEvent(new PopStateEvent('popstate'))
+            } else {
+              alert(data.error || 'Registration failed')
+            }
+          })
+          .catch((err) => alert('Error: ' + err.message))
+        return
+      }
+
+      // Login form
+      if (action.includes('login') || action.includes('services') || fields['LoginForm[username]'] !== undefined) {
+        const email = fields['LoginForm[username]'] || ''
+        const password = fields['LoginForm[password]'] || ''
+        fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.token) {
+              localStorage.setItem('token', data.token)
+              window.history.pushState({}, '', '/dashboard')
+              window.dispatchEvent(new PopStateEvent('popstate'))
+            } else {
+              alert(data.error || 'Login failed')
+            }
+          })
+          .catch((err) => alert('Error: ' + err.message))
+        return
+      }
+    }
+
+    page.addEventListener('submit', handleFormSubmit, true)
+    return () => page.removeEventListener('submit', handleFormSubmit, true)
+  }, [ready, html])
 
   if (error) return <main className="react-error"><h1>TechSMM</h1><p>{error}</p><a href="/">Return home</a></main>
   if (!ready) return <main className="page-loading" aria-label="Loading page"><span>Loading…</span></main>
