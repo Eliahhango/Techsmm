@@ -28,6 +28,21 @@ function localAsset(url) {
   return url
 }
 
+function normalizeRoute(value) {
+  if (!value || value.startsWith('#') || value.startsWith('mailto:') || value.startsWith('tel:') || value.startsWith('javascript:')) return value
+  let target
+  try { target = new URL(value, window.location.href) } catch { return value }
+  if (target.hostname !== window.location.hostname && !/^(www\.)?techsmm\.com$/i.test(target.hostname)) return value
+  let path = target.pathname.replace(/^\/+(?:techsmm\.com\/)?/i, '/')
+  path = path.replace(/^\/services\.html\//i, '/')
+  path = path.replace(/\.html\.html$/i, '.html')
+  if (path === '/index.html' || path === '/') return '/'
+  if (path === '/blog/index.html' || path === '/blog.html') return '/blog'
+  const blogPage = path.match(/^\/blog-page-(\d+)\.html$/i)
+  if (blogPage) return `/blog?page=${blogPage[1]}`
+  return path.replace(/\.html$/i, '') + target.search
+}
+
 function Page() {
   const [html, setHtml] = useState('')
   const [pendingHtml, setPendingHtml] = useState('')
@@ -55,6 +70,11 @@ function Page() {
         const document = new DOMParser().parseFromString(markup, 'text/html')
         setTitle(document.title || 'TechSMM')
         document.querySelectorAll('script').forEach((node) => node.remove())
+        document.body.querySelectorAll('a[href]').forEach((node) => {
+          const original = node.getAttribute('href')
+          const normalized = normalizeRoute(original)
+          if (normalized !== original) node.setAttribute('href', normalized)
+        })
         document.body.querySelectorAll('img[src],script[src],source[src],video[src],audio[src],iframe[src]').forEach((node) => {
           const original = node.getAttribute('src')
           const local = localAsset(original)
@@ -127,8 +147,9 @@ function Page() {
     const href = anchor.getAttribute('href')
     if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || /^https?:\/\//i.test(href)) return
     event.preventDefault()
-    const target = new URL(href, window.location.href)
-    window.history.pushState({}, '', target.pathname + target.search)
+    const target = normalizeRoute(href)
+    if (!target) return
+    window.history.pushState({}, '', target)
     window.dispatchEvent(new PopStateEvent('popstate'))
   }
 
