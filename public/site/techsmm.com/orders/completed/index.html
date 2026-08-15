@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orders</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+    <link rel="shortcut icon" type="image/ico" href="https://storage.perfectcdn.com/hmz1fi/21ogy6qcanfxi539.ico" />
+  <meta name="google-site-verification" content="VozB3SnRoiQ1gJsXBPy5L8eMjl2cmAcyy6-3VHzqKL0" />
+  <meta name="cryptomus" content="87193eaa" />
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		  <![endif]-->
+  
+<meta name="google-site-verification" content="nKhNuuJ_LQJBIfu6Y9uODD0KQfSHZsvfonzcMps60wQ" />
+
+
+
+<style>.integration-fixed {
+  position: fixed;
+  z-index: 10000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px;
+  row-gap: 12px;
+}
+.integration-fixed__top-left {
+  top: 0;
+  left: 0;
+}
+.integration-fixed__top-right {
+  top: 0;
+  right: 0;
+}
+.integration-fixed__bottom-left {
+  bottom: 0;
+  left: 0;
+}
+.integration-fixed__bottom-right {
+  bottom: 0;
+  right: 0;
+}
+</style>
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5GBZ2DN');</script>
+<!-- End Google Tag Manager -->
+
+
+  
+
+
+
+
+<link href="https://storage.perfectcdn.com/libs/jquery/1.12.4/jquery.min.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/y31lp1sfpjxenwff.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/yo7jjbt9bz8u4xk0.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/kkj76ozsjok1zzlw.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/tlrgcybojkfxdlfj.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/hmz1fi/5rlpuzscp8ism29e.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/hmz1fi/farxtjet462wr6bi.js" rel="preload" as="script">
+
+
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://techsmm.com/">
+  <meta property="og:title" content="TechSMM - Boost Your Social Media Presence with Our Advanced SMM Panel">
+  <meta property="og:description"
+    content="Our SMM panel is a powerful tool designed to help you increase your social media presence and reach. With features such as automatic post scheduling, real-time analytics, and targeted audience engagement, you can easily manage and grow your social media accounts. Whether you're a small business looking to expand your reach or an influencer looking to grow your following, our panel has the tools you need to succeed.">
+  <meta property="og:image" content="https://storage.perfectcdn.com/hmz1fi/6jhy59s8frcjddmn.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://techsmm.com/">
+  <meta property="twitter:title" content="TechSMM - Boost Your Social Media Presence with Our Advanced SMM Panel">
+  <meta property="twitter:description"
+    content="Our SMM panel is a powerful tool designed to help you increase your social media presence and reach. With features such as automatic post scheduling, real-time analytics, and targeted audience engagement, you can easily manage and grow your social media accounts. Whether you're a small business looking to expand your reach or an influencer looking to grow your following, our panel has the tools you need to succeed.">
+  <meta property="twitter:image" content="https://storage.perfectcdn.com/hmz1fi/6jhy59s8frcjddmn.png">
+
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/hmz1fi/xn3xyxzgfy8kn8r3.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/hmz1fi/knt5b5ikdcj87g78.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/libs/bootstrap-datetimepicker/4.17.47/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/css/font-awesome/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/global/bom82moil4436i6g.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/global/a5cpdole0ewqrg5w.css">
+  
+  <!--  Some CDN Link From Old Theme -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+    <!--  /// Some CDN Link From Old Theme -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+</head>
+
+<body class="dashboard" id="body" >
+    <script>
+    if (localStorage.getItem('techSMMCurrentMode')) {
+      const bodyFire2 = document.getElementById('body');
+      bodyFire2.classList.add('nightmode');
+    }
+  </script>
+  <main id="main_container">
+    <div class="d-none mob_bg_closer_sidebar" onclick="toggleSidebar()"></div>
+    <div class="sidebar">
+      <div class="sidebar_top">
+        <button class="close_btn_phone" onclick="toggleSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="logo">
+          <a href="/">
+            <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="logo_img img-fluid" alt="Tech SMM" title="Tech SMM">
+          </a>
+        </div>
+        <div class="user_data">
+          <div class="user_badges" data-bs-toggle="modal" data-bs-target="#GGstaticBackdrop">
+            <h4>
+                            NEW
+                          </h4>
+          </div>
+          <div class="total_data">
+            <div class="user_wrap">
+              <div class="v2_avatar">
+                <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" class="img-fluid"
+                  alt="Tech SMM Avatar" id="profile1">
+              </div>
+              <div class="v2_user_info">
+                <h5>elitechwiz</h5>
+              </div>
+            </div>
+            <div class="user_balance">
+              <span class="balance">$0.15</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="sidebar_bottom">
+        <div class="sidebar_menu">
+                              <a href="/" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+                        <div class="menu_name">
+              New order
+            </div>
+          </a>
+          
+                              <a href="/orders" class="menu_item active" >
+                        <div class="menu_icon">
+              <i class="fas fa-history"></i>
+            </div>
+                        <div class="menu_name">
+              Orders History
+            </div>
+          </a>
+          
+                              <a href="/massorder" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-list-ol"></i>
+            </div>
+                        <div class="menu_name">
+              Bulk Order
+            </div>
+          </a>
+          
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+          
+                    
+                    
+                    
+                              <a href="/services" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-server"></i>
+            </div>
+                        <div class="menu_name">
+              Services
+            </div>
+          </a>
+          
+                              <a href="/addfunds" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+                        <div class="menu_name">
+              Add funds
+            </div>
+          </a>
+          
+                              <a href="/tickets" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-comments"></i>
+            </div>
+                        <div class="menu_name">
+              Tickets Support
+            </div>
+          </a>
+          
+                    
+                    
+                    
+                    
+          
+          <!-- Show More Btn Codes Start -->
+          <div id="show_more_wrap">
+            <button type="button" class="" id="showMore">
+              <div class="menu_name">
+                Show More
+              </div>
+              <div class="menu_icon">
+                <i class="far fa-caret-circle-down"></i>
+              </div>
+            </button>
+
+          </div>
+
+          <div id="more_menu">
+                                                                                                                                                                                                                                                            <a href="/child-panel" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-child"></i>
+              </div>
+                            <div class="menu_name">
+                Child panel
+              </div>
+            </a>
+                                                <a href="/dashboard" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-tachometer-alt"></i>
+              </div>
+                            <div class="menu_name">
+                Dashboard
+              </div>
+            </a>
+                                                <a href="/updates" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-bell"></i>
+              </div>
+                            <div class="menu_name">
+                Updates
+              </div>
+            </a>
+                                                <a href="/api" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-wifi"></i>
+              </div>
+                            <div class="menu_name">
+                API
+              </div>
+            </a>
+                                  </div>
+          <!-- Show More Btn Codes End -->
+        </div>
+      </div>
+    </div>
+            <div class="content_area">
+      <div class="top_header">
+        <div class="top_head_wrap">
+          <div class="item">
+            <button class="sidebar_menu_icon" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo_off_nav">
+              <a href="/">
+                <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="img-fluid" alt="">
+              </a>
+            </div>
+          </div>
+          <div class="item">
+
+          </div>
+          <div class="item user_settings">
+
+            
+            <a href="javascript:void(0)" class="day_night_btn" onclick="toggleThemeMode()">
+              <span class="active_circle"></span>
+              <span class="night_mode"> <i class="fas fa-moon"></i> </span>
+              <span class="day_mode"><i class="fas fa-sun"></i></span>
+            </a>
+            <div class="dropdown">
+              <button class="btn btn-secondarybtn_profiles" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <span class="user_top_avatar">
+                  <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" width="40px" class="img-fluid" alt=""
+                    id="profile2">
+                </span>
+              </button>
+
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+                    <a href="/">
+                      <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="img-fluid offcanvas_site_logo" alt="">
+                    </a>
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <div>
+                    <div class="user_data mb-3">
+                      <div class="user_badges" data-bs-toggle="modal" data-bs-target="#GGstaticBackdrop">
+                        <h4>
+                                                    NEW
+                                                  </h4>
+                      </div>
+                      <div class="total_data">
+                        <div class="user_wrap">
+                          <div class="v2_avatar">
+                            <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" class="img-fluid"
+                              alt="Tech SMM Avatar" id="profile1">
+                          </div>
+                          <div class="v2_user_info">
+                            <h5>elitechwiz</h5>
+                          </div>
+                        </div>
+                        <div class="user_balance">
+                          <span class="balance">$0.15</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="user_menu_wraper">
+                      <div class="user__menu">
+                        <a class="user_menu__item" href="/account">
+                          <span class="user_menu_icon"><i class="fas fa-cog"></i></span>
+                          <span class="user_menu_text">Settings</span>
+                        </a>
+    
+                        <a class="user_menu__item" href="/terms">
+                          <span class="user_menu_icon"><i class="fas fa-list"></i></span>
+                          <span class="user_menu_text">Terms</span>
+                        </a>
+                        <a class="user_menu__item" href="/faq">
+                          <span class="user_menu_icon"><i class="fas fa-question-circle"></i></span>
+                          <span class="user_menu_text">Faq</span>
+                        </a>
+                        <a class="user_menu__item" href="/logout">
+                          <span class="user_menu_icon"> <i class="fas fa-sign-out"></i></
