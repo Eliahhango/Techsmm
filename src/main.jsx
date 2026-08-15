@@ -27,14 +27,19 @@ function localAsset(url) {
 
 function Page() {
   const [html, setHtml] = useState('')
+  const [pendingHtml, setPendingHtml] = useState('')
   const [error, setError] = useState('')
   const [styles, setStyles] = useState([])
   const [title, setTitle] = useState('TechSMM')
+  const [ready, setReady] = useState(false)
   const source = useMemo(() => sourceForPath(window.location.pathname, window.location.search), [window.location.pathname, window.location.search])
 
   useEffect(() => {
     let cancelled = false
     setError('')
+    setHtml('')
+    setPendingHtml('')
+    setReady(false)
     fetch(`${SITE_ROOT}${source}`)
       .then((response) => {
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`)
@@ -54,7 +59,7 @@ function Page() {
           .filter(Boolean)
         const inlineStyles = [...document.querySelectorAll('style')].map((style) => style.textContent)
         setStyles([...stylesheetUrls, ...inlineStyles.map((value) => `inline:${value}`)])
-        setHtml(document.body?.innerHTML || markup)
+        setPendingHtml(document.body?.innerHTML || markup)
       })
       .catch((reason) => !cancelled && setError(`Page not found: ${source} (${reason.message})`))
     return () => { cancelled = true }
@@ -63,6 +68,7 @@ function Page() {
   useEffect(() => {
     document.title = title
     const added = []
+    const waitForStyles = []
     styles.forEach((value) => {
       if (value.startsWith('inline:')) {
         const node = document.createElement('style')
@@ -73,12 +79,41 @@ function Page() {
         const node = document.createElement('link')
         node.rel = 'stylesheet'
         node.href = value
+        waitForStyles.push(new Promise((resolve) => {
+          const timeout = window.setTimeout(resolve, 5000)
+          node.onload = () => { window.clearTimeout(timeout); resolve() }
+          node.onerror = () => { window.clearTimeout(timeout); resolve() }
+        }))
         document.head.appendChild(node)
         added.push(node)
       }
     })
-    return () => added.forEach((node) => node.remove())
-  }, [styles, title])
+    if (!pendingHtml) return () => added.forEach((node) => node.remove())
+
+    const imageUrls = [...new DOMParser()
+      .parseFromString(pendingHtml, 'text/html')
+      .querySelectorAll('img[src]')]
+      .map((node) => node.getAttribute('src'))
+      .filter(Boolean)
+    const waitForImages = imageUrls.map((url) => new Promise((resolve) => {
+      const image = new Image()
+      const timeout = window.setTimeout(resolve, 5000)
+      image.onload = () => { window.clearTimeout(timeout); resolve() }
+      image.onerror = () => { window.clearTimeout(timeout); resolve() }
+      image.src = url
+    }))
+    let active = true
+    Promise.all([...waitForStyles, ...waitForImages]).then(() => {
+      if (active) {
+        setHtml(pendingHtml)
+        setReady(true)
+      }
+    })
+    return () => {
+      active = false
+      added.forEach((node) => node.remove())
+    }
+  }, [styles, title, pendingHtml])
 
   function navigate(event) {
     const anchor = event.target.closest('a')
@@ -92,6 +127,7 @@ function Page() {
   }
 
   if (error) return <main className="react-error"><h1>TechSMM</h1><p>{error}</p><a href="/">Return home</a></main>
+  if (!ready) return <main className="page-loading" aria-label="Loading page"><span>Loading…</span></main>
   return <div className="mirrored-page" onClick={navigate} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
