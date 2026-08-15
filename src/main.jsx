@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles.css'
 
-const SITE_ROOT = '/site/techsmm.com/'
+const SITE_ROOT = new URL('site/techsmm.com/', window.location.href).pathname
 
 function sourceForPath(pathname, search = '') {
   if (pathname === '/' || pathname === '') return 'index.html'
