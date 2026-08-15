@@ -14,7 +14,11 @@ function sourceForPath(pathname, search = '') {
     const page = new URLSearchParams(search).get('page')
     if (page && /^\d+(?:\.html)?$/.test(page)) return `blog-page-${page.replace(/\.html$/, '')}.html`
   }
-  return clean.endsWith('.html') ? clean : `${clean}.html`
+  if (clean.endsWith('.html')) return clean
+  // Try flat .html first (e.g. /dashboard → dashboard.html)
+  // Then nested index (e.g. /orders/pending → orders/pending/index.html)
+  // Return the flat version; fetch will 404 and we can fallback
+  return `${clean}.html`
 }
 
 function localAsset(url) {
@@ -58,11 +62,25 @@ function Page() {
     setHtml('')
     setPendingHtml('')
     setReady(false)
-    fetch(`${SITE_ROOT}${source}`)
-      .then((response) => {
-        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`)
-        return response.text()
-      })
+    
+    const urls = [`${SITE_ROOT}${source}`]
+    // Fallback: if /foo.html fails, try /foo/index.html (for nested pages like /orders/pending)
+    if (!source.endsWith('.html') || source.split('/').length > 1) {
+      const dirPath = source.replace(/\.html$/, '')
+      urls.push(`${SITE_ROOT}${dirPath}/index.html`)
+    }
+    
+    async function tryFetch() {
+      for (const url of urls) {
+        try {
+          const resp = await fetch(url)
+          if (resp.ok) return await resp.text()
+        } catch {}
+      }
+      throw new Error('Page not found')
+    }
+    
+    tryFetch()
       .then((markup) => {
         if (cancelled) return
         const closingHtml = markup.search(/<\/html>/i)
@@ -90,7 +108,7 @@ function Page() {
         setStyles([...stylesheetUrls, ...inlineStyles.map((value) => `inline:${value}`)])
         setPendingHtml(document.body?.innerHTML || markup)
       })
-      .catch((reason) => !cancelled && setError(`Page not found: ${source} (${reason.message})`))
+      .catch((reason) => !cancelled && setError(`Page not found: ${source} (${reason.message || reason})`))
     return () => { cancelled = true }
   }, [source])
 
