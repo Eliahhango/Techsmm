@@ -135,6 +135,114 @@ async function replacePricesWithTZS(doc) {
 }
 
 // ─── Dynamic Order Form: fetch services from API ──────────
+function getCategoryIcon(cat) {
+  const c = cat.toLowerCase()
+  if (c.includes('tiktok')) return '<i class="fab fa-tiktok"></i>'
+  if (c.includes('facebook')) return '<i class="fab fa-facebook"></i>'
+  if (c.includes('instagram')) return '<i class="fab fa-instagram"></i>'
+  if (c.includes('youtube')) return '<i class="fab fa-youtube"></i>'
+  if (c.includes('whatsapp')) return '<i class="fab fa-whatsapp"></i>'
+  if (c.includes('twitter') || c.includes('x ')) return '<i class="fab fa-twitter"></i>'
+  if (c.includes('telegram')) return '<i class="fab fa-telegram"></i>'
+  if (c.includes('linkedin')) return '<i class="fab fa-linkedin"></i>'
+  if (c.includes('spotify')) return '<i class="fab fa-spotify"></i>'
+  if (c.includes('snapchat')) return '<i class="fab fa-snapchat"></i>'
+  if (c.includes('discord')) return '<i class="fab fa-discord"></i>'
+  if (c.includes('reddit')) return '<i class="fab fa-reddit"></i>'
+  if (c.includes('pinterest')) return '<i class="fab fa-pinterest"></i>'
+  return '<i class="fas fa-globe"></i>'
+}
+
+function createCustomSelect(selectEl, items, onChange, renderItem) {
+  const wrapper = selectEl.ownerDocument.createElement('div')
+  wrapper.className = 'custom-select-wrapper'
+  wrapper.style.cssText = 'position:relative;width:100%;'
+
+  const trigger = selectEl.ownerDocument.createElement('div')
+  trigger.className = 'custom-select-trigger'
+  trigger.style.cssText = 'background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:10px 14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:14px;'
+
+  const arrow = selectEl.ownerDocument.createElement('span')
+  arrow.innerHTML = '<i class="fas fa-chevron-down"></i>'
+  arrow.style.cssText = 'color:#999;font-size:12px;transition:transform 0.2s;'
+
+  const panel = selectEl.ownerDocument.createElement('div')
+  panel.className = 'custom-select-panel'
+  panel.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border:1px solid #333;border-radius:0 0 8px 8px;max-height:400px;overflow-y:auto;z-index:10000;box-shadow:0 8px 24px rgba(0,0,0,0.4);'
+
+  const searchInput = selectEl.ownerDocument.createElement('input')
+  searchInput.type = 'text'
+  searchInput.placeholder = 'Search...'
+  searchInput.style.cssText = 'width:100%;box-sizing:border-box;padding:10px 14px;background:#0f0f1e;border:none;border-bottom:1px solid #333;color:#fff;font-size:13px;outline:none;position:sticky;top:0;z-index:1;'
+
+  panel.appendChild(searchInput)
+
+  let selectedValue = items.length > 0 ? items[0].value : ''
+  let selectedLabel = items.length > 0 ? items[0].label : 'Select...'
+
+  function renderItems(filter = '') {
+    const existingItems = panel.querySelectorAll('.custom-select-option')
+    existingItems.forEach(el => el.remove())
+    const lf = filter.toLowerCase()
+    items.filter(item => !lf || item.label.toLowerCase().includes(lf)).forEach(item => {
+      const opt = selectEl.ownerDocument.createElement('div')
+      opt.className = 'custom-select-option'
+      opt.style.cssText = 'padding:10px 14px;cursor:pointer;color:#ccc;font-size:13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #222;transition:background 0.15s;'
+      opt.innerHTML = renderItem ? renderItem(item) : `<span>${item.label}</span>`
+      opt.dataset.value = item.value
+      if (item.value === selectedValue) { opt.style.background = '#2a2a3e'; opt.style.color = '#fff' }
+      opt.addEventListener('mouseenter', () => { opt.style.background = '#2a2a3e'; opt.style.color = '#fff' })
+      opt.addEventListener('mouseleave', () => { if (item.value !== selectedValue) { opt.style.background = 'transparent'; opt.style.color = '#ccc' } })
+      opt.addEventListener('click', () => {
+        selectedValue = item.value
+        selectedLabel = item.label
+        trigger.querySelector('.trigger-label').innerHTML = renderItem ? renderItem(item) : `<span>${item.label}</span>`
+        panel.style.display = 'none'
+        arrow.querySelector('i').style.transform = 'rotate(0deg)'
+        searchInput.value = ''
+        if (onChange) onChange(item.value)
+      })
+      panel.appendChild(opt)
+    })
+  }
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation()
+    const wasOpen = panel.style.display === 'block'
+    // Close all other custom selects
+    selectEl.ownerDocument.querySelectorAll('.custom-select-panel').forEach(p => p.style.display = 'none')
+    selectEl.ownerDocument.querySelectorAll('.custom-select-trigger .fa-chevron-down').forEach(a => a.style.transform = 'rotate(0deg)')
+    if (!wasOpen) {
+      panel.style.display = 'block'
+      arrow.querySelector('i').style.transform = 'rotate(180deg)'
+      searchInput.focus()
+      renderItems()
+    }
+  })
+
+  searchInput.addEventListener('input', () => renderItems(searchInput.value))
+  searchInput.addEventListener('click', (e) => e.stopPropagation())
+
+  selectEl.ownerDocument.addEventListener('click', () => {
+    panel.style.display = 'none'
+    arrow.querySelector('i').style.transform = 'rotate(0deg)'
+  })
+
+  trigger.appendChild(selectEl.ownerDocument.createElement('span'))
+  trigger.querySelector('span:last-child').className = 'trigger-label'
+  trigger.querySelector('span:last-child').style.cssText = 'flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'
+  trigger.querySelector('span:last-child').innerHTML = items.length > 0 ? (renderItem ? renderItem(items[0]) : `<span>${items[0].label}</span>`) : '<span>Select...</span>'
+  trigger.appendChild(arrow)
+
+  wrapper.appendChild(trigger)
+  wrapper.appendChild(panel)
+  selectEl.style.display = 'none'
+  selectEl.parentNode.insertBefore(wrapper, selectEl.nextSibling)
+
+  renderItems()
+  return { setSelected: (val) => { selectedValue = val; const item = items.find(i => i.value === val); if (item) { selectedLabel = item.label; trigger.querySelector('.trigger-label').innerHTML = renderItem ? renderItem(item) : `<span>${item.label}</span>`; if (onChange) onChange(val) } }, getValue: () => selectedValue }
+}
+
 async function setupDynamicOrderForm(doc) {
   try {
     const token = localStorage.getItem('token')
@@ -147,77 +255,68 @@ async function setupDynamicOrderForm(doc) {
     const categories = data.categories
     const catNames = Object.keys(categories)
 
-    // Populate category dropdown
-    const catSelect = doc.querySelector('#orderform-category')
-    if (catSelect) {
-      catSelect.innerHTML = ''
-      catNames.forEach((cat, i) => {
-        const opt = doc.createElement('option')
-        opt.value = cat
-        opt.textContent = cat
-        if (i === 0) opt.selected = true
-        catSelect.appendChild(opt)
-      })
-    }
+    // Category items for custom dropdown
+    const catItems = catNames.map(cat => ({ value: cat, label: cat, icon: getCategoryIcon(cat) }))
 
-    // Populate service dropdown for selected category
+    const catSelect = doc.querySelector('#orderform-category')
     const serviceSelect = doc.querySelector('#orderform-service')
+
     function populateServices(category) {
       if (!serviceSelect) return
       const services = categories[category] || []
-      serviceSelect.innerHTML = ''
-      services.forEach(s => {
-        const opt = doc.createElement('option')
-        opt.value = s.service
-        opt.textContent = `[${s.service}] ${s.name} - $${s.rate} per 1000`
-        opt.dataset.rate = s.rate
-        opt.dataset.min = s.min
-        opt.dataset.max = s.max
-        opt.dataset.name = s.name
-        serviceSelect.appendChild(opt)
-      })
-      // Update min/max display
-      if (services.length > 0) {
-        const s = services[0]
-        const minMaxEl = doc.querySelector('[data-id="serviceMinMax"]') || doc.querySelector('.min_max')
-        if (minMaxEl) minMaxEl.textContent = `Min: ${s.min} - Max: ${s.max.toLocaleString()}`
-        const priceEl = doc.querySelector('[data-id="servicePrice"]') || doc.querySelector('.service_price')
-        if (priceEl) priceEl.textContent = `$${s.rate} per 1000`
+      const svcItems = services.map(s => ({
+        value: String(s.service),
+        label: `[${s.service}] ${s.name} - $${s.rate} per 1000`,
+        service: s
+      }))
+
+      if (window._svcSelectCtrl) {
+        // Remove old custom dropdown
+        const oldWrapper = serviceSelect.parentNode.querySelector('.custom-select-wrapper')
+        if (oldWrapper) oldWrapper.remove()
+        window._svcSelectCtrl = null
       }
+
+      window._svcSelectCtrl = createCustomSelect(serviceSelect, svcItems, (val) => {
+        const svc = services.find(s => String(s.service) === val)
+        if (svc) updateServiceDetails(svc, doc)
+      }, (item) => {
+        const s = item.service
+        const refill = s.refill ? ' <span style="color:#4ade80;font-weight:600;">REFILL</span>' : ' <span style="color:#f87171;">NO REFILL</span>'
+        return `<span style="background:#f97316;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${s.service}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.name}${refill} - $${s.rate} per 1000</span>`
+      })
+
+      if (services.length > 0) updateServiceDetails(services[0], doc)
+    }
+
+    function updateServiceDetails(svc, d) {
+      const minMaxEl = d.querySelector('[data-id="serviceMinMax"]') || d.querySelector('.min_max')
+      if (minMaxEl) minMaxEl.textContent = `Min: ${svc.min} - Max: ${svc.max.toLocaleString()}`
+      const minMaxDisplay = d.querySelector('#min-max-display')
+      if (minMaxDisplay) minMaxDisplay.textContent = `Min: ${svc.min} - Max: ${svc.max.toLocaleString()}`
+      const priceEl = d.querySelector('[data-id="servicePrice"]') || d.querySelector('.service_price')
+      if (priceEl) priceEl.textContent = `$${svc.rate} per 1000`
+      const qtyInput = d.querySelector('#orderform-quantity')
+      if (qtyInput) { qtyInput.min = svc.min; qtyInput.max = svc.max }
+    }
+
+    // Create custom category dropdown
+    if (catSelect && catItems.length > 0) {
+      window._catSelectCtrl = createCustomSelect(catSelect, catItems, (val) => {
+        populateServices(val)
+      }, (item) => {
+        return `<span style="width:20px;text-align:center;">${item.icon}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.label} <sup style="color:#4ade80;font-size:10px;">NEW</sup></span>`
+      })
     }
 
     if (catNames.length > 0) populateServices(catNames[0])
-
-    // On category change
-    if (catSelect) {
-      catSelect.addEventListener('change', (e) => {
-        populateServices(e.target.value)
-      })
-    }
-
-    // On service change - update details
-    if (serviceSelect) {
-      serviceSelect.addEventListener('change', (e) => {
-        const opt = e.target.selectedOptions[0]
-        if (!opt) return
-        const minMaxEl = doc.querySelector('[data-id="serviceMinMax"]') || doc.querySelector('.min_max')
-        if (minMaxEl) minMaxEl.textContent = `Min: ${opt.dataset.min} - Max: ${Number(opt.dataset.max).toLocaleString()}`
-        const minMaxDisplay = doc.querySelector('#min-max-display')
-        if (minMaxDisplay) minMaxDisplay.textContent = `Min: ${opt.dataset.min} - Max: ${Number(opt.dataset.max).toLocaleString()}`
-        const priceEl = doc.querySelector('[data-id="servicePrice"]') || doc.querySelector('.service_price')
-        if (priceEl) priceEl.textContent = `$${opt.dataset.rate} per 1000`
-        // Set min/max on quantity input
-        const qtyInput = doc.querySelector('#orderform-quantity')
-        if (qtyInput) { qtyInput.min = opt.dataset.min; qtyInput.max = opt.dataset.max }
-      })
-    }
 
     // Handle order form submission
     const orderForm = doc.querySelector('#order-form')
     if (orderForm) {
       orderForm.addEventListener('submit', async (e) => {
         e.preventDefault()
-        const serviceId = serviceSelect?.value
+        const serviceId = window._svcSelectCtrl?.getValue()
         const link = doc.querySelector('#orderform-link')?.value?.trim()
         const quantity = doc.querySelector('#orderform-quantity')?.value
         if (!serviceId || !link || !quantity) { alert('Please fill in all fields'); return }
@@ -268,15 +367,16 @@ async function setupDynamicOrderForm(doc) {
               item.addEventListener('mouseenter', () => item.style.background = '#2a2a3e')
               item.addEventListener('mouseleave', () => item.style.background = 'transparent')
               item.addEventListener('click', () => {
-                // Set category and service
-                if (catSelect) {
-                  const catOpt = Array.from(catSelect.options).find(o => o.value === s.category)
-                  if (catOpt) { catSelect.value = s.category; catSelect.dispatchEvent(new Event('change')) }
+                // Set category using custom select controller
+                if (window._catSelectCtrl) {
+                  window._catSelectCtrl.setSelected(s.category)
                 }
-                if (serviceSelect) {
-                  const svcOpt = Array.from(serviceSelect.options).find(o => o.value == s.service)
-                  if (svcOpt) { serviceSelect.value = s.service; serviceSelect.dispatchEvent(new Event('change')) }
-                }
+                // Set service using custom select controller (after category change populates services)
+                setTimeout(() => {
+                  if (window._svcSelectCtrl) {
+                    window._svcSelectCtrl.setSelected(String(s.service))
+                  }
+                }, 100)
                 searchInput.value = s.name
                 resultsDiv.style.display = 'none'
               })
