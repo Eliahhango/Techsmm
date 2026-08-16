@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orders</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+    <link rel="shortcut icon" type="image/ico" href="https://storage.perfectcdn.com/hmz1fi/21ogy6qcanfxi539.ico" />
+  <meta name="google-site-verification" content="VozB3SnRoiQ1gJsXBPy5L8eMjl2cmAcyy6-3VHzqKL0" />
+  <meta name="cryptomus" content="87193eaa" />
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		  <![endif]-->
+  
+<meta name="google-site-verification" content="nKhNuuJ_LQJBIfu6Y9uODD0KQfSHZsvfonzcMps60wQ" />
+
+
+
+<style>.integration-fixed {
+  position: fixed;
+  z-index: 10000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px;
+  row-gap: 12px;
+}
+.integration-fixed__top-left {
+  top: 0;
+  left: 0;
+}
+.integration-fixed__top-right {
+  top: 0;
+  right: 0;
+}
+.integration-fixed__bottom-left {
+  bottom: 0;
+  left: 0;
+}
+.integration-fixed__bottom-right {
+  bottom: 0;
+  right: 0;
+}
+</style>
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5GBZ2DN');</script>
+<!-- End Google Tag Manager -->
+
+
+  
+
+
+
+
+<link href="https://storage.perfectcdn.com/libs/jquery/1.12.4/jquery.min.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/y31lp1sfpjxenwff.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/yo7jjbt9bz8u4xk0.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/kkj76ozsjok1zzlw.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/global/tlrgcybojkfxdlfj.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/hmz1fi/5rlpuzscp8ism29e.js" rel="preload" as="script">
+<link href="https://storage.perfectcdn.com/hmz1fi/farxtjet462wr6bi.js" rel="preload" as="script">
+
+
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://techsmm.com/">
+  <meta property="og:title" content="TechSMM - Boost Your Social Media Presence with Our Advanced SMM Panel">
+  <meta property="og:description"
+    content="Our SMM panel is a powerful tool designed to help you increase your social media presence and reach. With features such as automatic post scheduling, real-time analytics, and targeted audience engagement, you can easily manage and grow your social media accounts. Whether you're a small business looking to expand your reach or an influencer looking to grow your following, our panel has the tools you need to succeed.">
+  <meta property="og:image" content="https://storage.perfectcdn.com/hmz1fi/6jhy59s8frcjddmn.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://techsmm.com/">
+  <meta property="twitter:title" content="TechSMM - Boost Your Social Media Presence with Our Advanced SMM Panel">
+  <meta property="twitter:description"
+    content="Our SMM panel is a powerful tool designed to help you increase your social media presence and reach. With features such as automatic post scheduling, real-time analytics, and targeted audience engagement, you can easily manage and grow your social media accounts. Whether you're a small business looking to expand your reach or an influencer looking to grow your following, our panel has the tools you need to succeed.">
+  <meta property="twitter:image" content="https://storage.perfectcdn.com/hmz1fi/6jhy59s8frcjddmn.png">
+
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/hmz1fi/xn3xyxzgfy8kn8r3.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/hmz1fi/knt5b5ikdcj87g78.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/libs/bootstrap-datetimepicker/4.17.47/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/css/font-awesome/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/global/bom82moil4436i6g.css">
+    <link rel="stylesheet" type="text/css" href="https://storage.perfectcdn.com/global/a5cpdole0ewqrg5w.css">
+  
+  <!--  Some CDN Link From Old Theme -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.2/css/bootstrap-select.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.2/umd/popper.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+    <!--  /// Some CDN Link From Old Theme -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+</head>
+
+<body class="dashboard" id="body" >
+    <script>
+    if (localStorage.getItem('techSMMCurrentMode')) {
+      const bodyFire2 = document.getElementById('body');
+      bodyFire2.classList.add('nightmode');
+    }
+  </script>
+  <main id="main_container">
+    <div class="d-none mob_bg_closer_sidebar" onclick="toggleSidebar()"></div>
+    <div class="sidebar">
+      <div class="sidebar_top">
+        <button class="close_btn_phone" onclick="toggleSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="logo">
+          <a href="/">
+            <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="logo_img img-fluid" alt="Tech SMM" title="Tech SMM">
+          </a>
+        </div>
+        <div class="user_data">
+          <div class="user_badges" data-bs-toggle="modal" data-bs-target="#GGstaticBackdrop">
+            <h4>
+                            NEW
+                          </h4>
+          </div>
+          <div class="total_data">
+            <div class="user_wrap">
+              <div class="v2_avatar">
+                <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" class="img-fluid"
+                  alt="Tech SMM Avatar" id="profile1">
+              </div>
+              <div class="v2_user_info">
+                <h5>elitechwiz</h5>
+              </div>
+            </div>
+            <div class="user_balance">
+              <span class="balance">$0.15</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="sidebar_bottom">
+        <div class="sidebar_menu">
+                              <a href="/" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+                        <div class="menu_name">
+              New order
+            </div>
+          </a>
+          
+                              <a href="/orders" class="menu_item active" >
+                        <div class="menu_icon">
+              <i class="fas fa-history"></i>
+            </div>
+                        <div class="menu_name">
+              Orders History
+            </div>
+          </a>
+          
+                              <a href="/massorder" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-list-ol"></i>
+            </div>
+                        <div class="menu_name">
+              Bulk Order
+            </div>
+          </a>
+          
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+          
+                    
+                    
+                    
+                              <a href="/services" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-server"></i>
+            </div>
+                        <div class="menu_name">
+              Services
+            </div>
+          </a>
+          
+                              <a href="/addfunds" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+                        <div class="menu_name">
+              Add funds
+            </div>
+          </a>
+          
+                              <a href="/tickets" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-comments"></i>
+            </div>
+                        <div class="menu_name">
+              Tickets Support
+            </div>
+          </a>
+          
+                    
+                    
+                    
+                    
+          
+          <!-- Show More Btn Codes Start -->
+          <div id="show_more_wrap">
+            <button type="button" class="" id="showMore">
+              <div class="menu_name">
+                Show More
+              </div>
+              <div class="menu_icon">
+                <i class="far fa-caret-circle-down"></i>
+              </div>
+            </button>
+
+          </div>
+
+          <div id="more_menu">
+                                                                                                                                                                                                                                                            <a href="/child-panel" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-child"></i>
+              </div>
+                            <div class="menu_name">
+                Child panel
+              </div>
+            </a>
+                                                <a href="/dashboard" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-tachometer-alt"></i>
+              </div>
+                            <div class="menu_name">
+                Dashboard
+              </div>
+            </a>
+                                                <a href="/updates" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-bell"></i>
+              </div>
+                            <div class="menu_name">
+                Updates
+              </div>
+            </a>
+                                                <a href="/api" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-wifi"></i>
+              </div>
+                            <div class="menu_name">
+                API
+              </div>
+            </a>
+                                  </div>
+          <!-- Show More Btn Codes End -->
+        </div>
+      </div>
+    </div>
+            <div class="content_area">
+      <div class="top_header">
+        <div class="top_head_wrap">
+          <div class="item">
+            <button class="sidebar_menu_icon" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo_off_nav">
+              <a href="/">
+                <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="img-fluid" alt="">
+              </a>
+            </div>
+          </div>
+          <div class="item">
+
+          </div>
+          <div class="item user_settings">
+
+            
+            <a href="javascript:void(0)" class="day_night_btn" onclick="toggleThemeMode()">
+              <span class="active_circle"></span>
+              <span class="night_mode"> <i class="fas fa-moon"></i> </span>
+              <span class="day_mode"><i class="fas fa-sun"></i></span>
+            </a>
+            <div class="dropdown">
+              <button class="btn btn-secondarybtn_profiles" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <span class="user_top_avatar">
+                  <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" width="40px" class="img-fluid" alt=""
+                    id="profile2">
+                </span>
+              </button>
+
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+                    <a href="/">
+                      <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="img-fluid offcanvas_site_logo" alt="">
+                    </a>
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <div>
+                    <div class="user_data mb-3">
+                      <div class="user_badges" data-bs-toggle="modal" data-bs-target="#GGstaticBackdrop">
+                        <h4>
+                                                    NEW
+                                                  </h4>
+                      </div>
+                      <div class="total_data">
+                        <div class="user_wrap">
+                          <div class="v2_avatar">
+                            <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" class="img-fluid"
+                              alt="Tech SMM Avatar" id="profile1">
+                          </div>
+                          <div class="v2_user_info">
+                            <h5>elitechwiz</h5>
+                          </div>
+                        </div>
+                        <div class="user_balance">
+                          <span class="balance">$0.15</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="user_menu_wraper">
+                      <div class="user__menu">
+                        <a class="user_menu__item" href="/account">
+                          <span class="user_menu_icon"><i class="fas fa-cog"></i></span>
+                          <span class="user_menu_text">Settings</span>
+                        </a>
+    
+                        <a class="user_menu__item" href="/terms">
+                          <span class="user_menu_icon"><i class="fas fa-list"></i></span>
+                          <span class="user_menu_text">Terms</span>
+                        </a>
+                        <a class="user_menu__item" href="/faq">
+                          <span class="user_menu_icon"><i class="fas fa-question-circle"></i></span>
+                          <span class="user_menu_text">Faq</span>
+                        </a>
+                        <a class="user_menu__item" href="/logout">
+                          <span class="user_menu_icon"> <i class="fas fa-sign-out"></i></span>
+                          <span class="user_menu_text">Logout</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content">
+        <!-- page and other top info -->
+        <div id="page_info">
+
+        </div>
+        <!-- // page and other top info -->
+        <section id="defOrder">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card_v2">
+                    <div class="card-body">
+                        <form action="/orders" method="get" id="history-search">
+                            <div class="input-group">
+                              <input type="text" name="search" class="form-control" value=""
+                                     placeholder="Search">
+                              <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i></button>
+                              </span>
+                            </div>
+                          </form>
+                    </div>
+                </div>
+                <div class="card card_v2">
+                    <div class="card-body">
+                        <nav class="nav nav-pills flex-column flex-sm-row gap-2" id="orders_menu">
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders"><span class="icon"><i class="fas fa-list"></i></span>All</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/pending"><span class="icon"><i class="far fa-pause-circle"></i></span>Pending</a>
+
+
+                            <a class="flex-sm-fill text-sm-center nav-link  " href="/orders/inprogress"><span class="icon"><i class="fas fa-redo"></i></span>In progress</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/completed"><span class="icon"><i class="fas fa-check-double"></i></span>Completed</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link active" href="/orders/partial"><span class="icon"><i class="fas fa-check"></i></span>Partial</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/processing"><span class="icon"><i class="fas fa-chart-line"></i></span>Processing</a>
+
+                            <a class="flex-sm-fill text-sm-center nav-link " href="/orders/canceled"><span class="icon"><i class="far fa-times-circle"></i></span>Canceled</a>
+                          </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="table">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+               <div class="card card_v2">
+                   <div class="card-body">
+                        <div class="responsive-table def_table">
+                            <div class="table-responsive">
+                                <table class="table order_page" id="service-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Link</th>
+                                            <th scope="col">Charge</th>
+                                            <th scope="col">Start count</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Service</th>
+                                            <th scope="col">Remains</th>
+                                            <th scope="col">Status</th>
+                                                                                        <th scope="col">Quick Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                            </tbody>
+                                </table>
+                                                            </div>
+                    </div>
+                   </div>
+               </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      </div>
+    </div>
+  </main>
+  
+  
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5GBZ2DN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+<div class="integration-fixed integration-fixed__bottom-right">
+    <style>
+    .telegram-container {
+        position: relative;
+    }
+
+    .telegram-button {
+        width: 60px;
+        height: 60px;
+        bottom: 40px;
+        right: 40px;
+        background-color: transparent !important;
+        color: #FFF !important;
+        border-radius: 50px;
+        text-align: center;
+        font-size: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none !important;
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        -ms-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+        transform: scale(0.9);
+        outline: none !important;
+    }
+
+    .telegram-button::after {
+        content: '';
+        position: absolute;
+        width: 70%;
+        height: 70%;
+        background-color: #fff !important;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: -1;
+    }
+
+    .telegram-button svg {
+        fill: #24A1DE;
+        width: 60px;
+    }
+
+    .telegram-button:hover {
+        transform: scale(1);
+    }
+</style>
+<div class="telegram-container">
+    <a href="https://telegram.me/Techsmmsupport" target="_blank" class="telegram-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+            <path d="M248 8C111 8 0 119 0 256S111 504 248 504 496 393 496 256 385 8 248 8zM363 176.7c-3.7 39.2-19.9 134.4-28.1 178.3-3.5 18.6-10.3 24.8-16.9 25.4-14.4 1.3-25.3-9.5-39.3-18.7-21.8-14.3-34.2-23.2-55.3-37.2-24.5-16.1-8.6-25 5.3-39.5 3.7-3.8 67.1-61.5 68.3-66.7 .2-.7 .3-3.1-1.2-4.4s-3.6-.8-5.1-.5q-3.3 .7-104.6 69.1-14.8 10.2-26.9 9.9c-8.9-.2-25.9-5-38.6-9.1-15.5-5-27.9-7.7-26.8-16.3q.8-6.7 18.5-13.7 108.4-47.2 144.6-62.3c68.9-28.6 83.2-33.6 92.5-33.8 2.1 0 6.6 .5 9.6 2.9a10.5 10.5 0 0 1 3.5 6.7A43.8 43.8 0 0 1 363 176.7z" />
+        </svg>
+    </a>
+</div>    <style>
+    .whatsapp-button {
+        width: 60px;
+        height: 60px;
+        bottom: 40px;
+        right: 40px;
+        background-color: #25d366;
+        color: #FFF !important;
+        border-radius: 50px;
+        text-align: center;
+        font-size: 30px;
+        box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none !important;
+        -webkit-transition: all 0.3s ease;
+        -moz-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        -ms-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+        transform: scale(0.9);
+        outline: none !important;
+    }
+
+    .whatsapp-button svg {
+        fill: #fff;
+    }
+
+    .whatsapp-button:hover {
+        transform: scale(1);
+        background-color: #1fcc5f;
+    }
+</style>
+<div class="whatsapp-container">
+    <a href="https://api.whatsapp.com/send?phone=8801708924551" target="_blank" class="whatsapp-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="26">
+            <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
+        </svg>
+    </a>
+</div></div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="GGstaticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="GGstaticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body status_modal">
+          <!-- <div class="d-flex align-items-start"> -->
+          <button type="button" class="modal_status_close btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <i class="far fa-times"></i>
+          </button>
+          <div class="row">
+            <div class="col-md-2">
+              <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <button class="nav-link text-start  active" id="v-pills-NEW-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-NEW" type="button" role="tab" aria-controls="v-pills-NEW"
+                  aria-selected="true"><i class="fas fa-star"></i> NEW</button>
+                <button class="nav-link text-start" id="v-pills-JUNIOR-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-JUNIOR" type="button" role="tab" aria-controls="v-pills-JUNIOR"
+                  aria-selected="false"><i class="fas fa-child"></i> JUNIOR </button>
+                <button class="nav-link text-start" id="v-pills-Regular-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-Regular" type="button" role="tab" aria-controls="v-pills-Regular"
+                  aria-selected="false"><i class="fad fa-user-astronaut"></i> REGULAR</button>
+                <button class="nav-link text-start" id="v-pills-FREQUENT-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-FREQUENT" type="button" role="tab" aria-controls="v-pills-FREQUENT"
+                  aria-selected="false"><i class="fas fa-gem"></i> FREQUENT </button>
+
+                <button class="nav-link text-start" id="v-pills-ELITE-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-ELITE" type="button" role="tab" aria-controls="v-pills-ELITE"
+                  aria-selected="false"><i class="fas fa-badge-sheriff"></i> ELITE</button>
+                <button class="nav-link text-start" id="v-pills-VIP-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-VIP" type="button" role="tab" aria-controls="v-pills-VIP"
+                  aria-selected="false"><i class="fas fa-chess-king"></i> VIP </button>
+
+                <button class="nav-link text-start" id="v-pills-MASTER-tab" data-bs-toggle="pill"
+                  data-bs-target="#v-pills-MASTER" type="button" role="tab" aria-controls="v-pills-MASTER"
+                  aria-selected="false"><i class="fas fa-crown"></i> MASTER</button>
+
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-NEW" role="tabpanel"
+                  aria-labelledby="v-pills-NEW-tab">
+                  <div class="account_benifits">
+                    <h4>Account Benefits</h4>
+                    <h3><i class="fas fa-star"></i> NEW</h3>
+                    <ul>
+                      <p>👍24/7 ticket support</p>
+                    
+                    </ul>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-JUNIOR" role="tabpanel" aria-labelledby="v-pills-JUNIOR-tab">
+                  <div class="account_benifits">
+                    <h4>Account Benefits</h4>
+                    <h3><i class="fas fa-child"></i> JUNIOR</h3>
+                    <ul>
+                      <p>👍24/7 ticket support</p>
+                      
+                      <p>👍Child Panel - Discount ( 50% Discount for 1st month bill )</p>
+                    </ul>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-Regular" role="tabpanel" aria-labelledby="v-pills-Regular-tab">
+                  <div class="account_benifits">
+                    <h4>Account Benefits</h4>
+                    <h3><i class="fad fa-user-astronaut"></i> REGULAR</h3>
+                    <ul>
+                      <p>👍 24/7 Tickets Support</p>
+                    
+                      <p>👍 Up to 5% Payments Bonus</p>
+                      <p>👍Free Child Panel ( 1st Month Free )</p>
+                    </ul>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-FREQUENT" role="tabpanel" aria-labelledby="v-pills-FREQUENT-tab">
+                  <div class="account_benifits">
+                    <h4>Account Benefits</h4>
+                    <h3><i class="fas fa-gem"></i> FREQUENT</h3>
+                    <ul>
+                      <p>👍 24/7 Tickets Support</p>
+                      <p>👍 Up to 5% Payments Bonus</p>
+                   
+                      <p>👍 Free Child Panel - Lifetime (Min 500$ spend per month)</p>
+                      <p>👍 Priority Tickets Support by Team</p>
+                    </ul>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-ELITE" role="tabpanel" aria-labelledby="v-pills-ELITE-tab">
+                  <div class="account_benifits">
+                    <h4>Account Benefits</h4>
+                    <h3><i class="fas fa-badge-sheriff"></i> ELITE</h3>
+                    <ul>
+                      <p>👍 24/7 Tickets Support</p>
+                      <p>👍 Up to 5% Payments Bonus</p>
+                      
+                      <p>👍 Free Child Panel - Lifetime (Min 500$ spend per month)</p>
+                      <p>👍 Priority Tickets Support by Team</p>
+                      <p>👍 5-10% Discount Available</p>
+                    </ul>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="v-pills-VIP" role="tabpanel" aria-labelledby="v-pills-VIP-tab">
+                  <div class="account_benifits">
+                    <h4>Account Benefits</h4>
+                    <h3><i class="fas fa-chess-king"></i> VIP </h3>
+                    <ul>
+                      <p>👍 24/7 Tickets Support</p>
+                      <p>👍 Up to 5% Payments Bonus</p>
+                      
+                      <p>👍 Free Child Panel - Lifetime (Min 500$ spend per month)</p>
+                      <p>👍 Priority Tickets Support by Team</p>
+                      <p>👍 5-10% Discount Available</p>
+                      <p>👍 Early Notification On new services</p>
+                      <p>👍 Whatsapp Support by Team</p>
+                    </ul>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="v-pills-MASTER" role="tabpanel" aria-labelledby="v-pills-MASTER-tab">
+                  <div class="account_benifits">
+                    <h4>Account Benefits</h4>
+                    <h3><i class="fas fa-crown"></i> MASTER </h3>
+                    <ul>
+                      <p>👍 24/7 Tickets Support</p>
+                      <p>👍 Up to 5% Payments Bonus</p>
+                    
+                      <p>👍 Free Child Panel - Lifetime (Min 500$ spend per month)</p>
+                      <p>👍 Priority Tickets Support by Team</p>
+                      <p>👍 5-10% Discount Available</p>
+                      <p>👍 Early Notification On new services</p>
+                      <p>👍 Whatsapp Support by Team</p>
+                      <p>👍 Special Discount by the admin</p>
+                      <p>👍 Support handle by the admin</p>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <!-- </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+    
+  
+<a href="https://t.me/techsmmannouncement" target="_blank">
+  <div id="myAliceWebChat"><div style="background: rgb(42, 171, 238); box-sizing: border-box; display: inline-flex; padding: 10px 14px; justify-content: center; align-items: center; color: rgb(255, 255, 255); cursor: pointer; border-radius: 20px; position: fixed; box-shadow: none; left: 20px; right: auto; bottom: 26px; z-index: 99999;"><svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M18.384,22.779c0.322,0.228 0.737,0.285 1.107,0.145c0.37,-0.141 0.642,-0.457 0.724,-0.84c0.869,-4.084 2.977,-14.421 3.768,-18.136c0.06,-0.28 -0.04,-0.571 -0.26,-0.758c-0.22,-0.187 -0.525,-0.241 -0.797,-0.14c-4.193,1.552 -17.106,6.397 -22.384,8.35c-0.335,0.124 -0.553,0.446 -0.542,0.799c0.012,0.354 0.25,0.661 0.593,0.764c2.367,0.708 5.474,1.693 5.474,1.693c0,0 1.452,4.385 2.209,6.615c0.095,0.28 0.314,0.5 0.603,0.576c0.288,0.075 0.596,-0.004 0.811,-0.207c1.216,-1.148 3.096,-2.923 3.096,-2.923c0,0 3.572,2.619 5.598,4.062Zm-11.01,-8.677l1.679,5.538l0.373,-3.507c0,0 6.487,-5.851 10.185,-9.186c0.108,-0.098 0.123,-0.262 0.033,-0.377c-0.089,-0.115 -0.253,-0.142 -0.376,-0.064c-4.286,2.737 -11.894,7.596 -11.894,7.596Z"></path></svg><span style="margin-left: 8px; font-style: normal; font-size: 14px; font-weight: 600; line-height: 20px;">Join</span></div></div>
+</a>
+
+    <script type="text/javascript"  src="https://storage.perfectcdn.com/libs/jquery/1.12.4/jquery.min.js" >
+      </script>
+    <script type="text/javascript"  src="https://storage.perfectcdn.com/global/y31lp1sfpjxenwff.js" >
+      </script>
+    <script type="text/javascript"  src="https://storage.perfectcdn.com/global/yo7jjbt9bz8u4xk0.js" >
+      </script>
+    <script type="text/javascript"  src="https://storage.perfectcdn.com/global/kkj76ozsjok1zzlw.js" >
+      </script>
+    <script type="text/javascript"  src="https://storage.perfectcdn.com/global/tlrgcybojkfxdlfj.js" >
+      </script>
+    <script type="text/javascript"  src="https://storage.perfectcdn.com/hmz1fi/5rlpuzscp8ism29e.js" >
+      </script>
+    <script type="text/javascript"  src="https://storage.perfectcdn.com/hmz1fi/farxtjet462wr6bi.js" >
+      </script>
+    <script type="text/javascript" >
+        window.modules.layouts = {"theme_id":1,"auth":1,"live":true,"csrftoken":"bnfINPipg0Vw0_drueHkeUYecYrPwcqnvNnnVaSsIzsEOaR1r-_WISqnhlrsiakRFHApyJD5o-yJtqIt1eNZTw=="};
+      </script>
+    <script type="text/javascript" >
+        window.modules.siteOrdersList = {"pageUrl":"\/orders"};
+      </script>
+    <script type="text/javascript" >
+        window.modules.user_app_show_config = [];
+      </script>
+    <script type="text/javascript" >
+        window.modules.alerts = {"alerts":[]};
+      </script>
+    <script type="text/javascript" >
+      </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+
+
+  <script>
+    $('#want').change(function () {
+      if ($(this).val() == 'Cancel') {
+        $('.reason-box').css('display', 'block');
+        $('#reason').prop('required', true);
+      } else {
+        $('.reason-box').css('display', 'none');
+        $('#reason').prop('required', false);
+      }
+    });
+    $('#point-options').change(function () {
+      if ($(this).val() == 'Redeem Points') {
+        $('#howmanyPoints').css('display', 'block');
+      } else {
+        $('#howmanyPoints').css('display', 'none');
+      }
+    });
+  </script>
+
+  <script>
+    var _0x272c = ['<span\x20class=\x27fas\x20fa-check\x20text-success\x20mr-1\x27></span>\x20', '<span\x20class=\x27fas\x20fa-times\x20text-danger\x27></span>', 'replace', 'ready', '.serviceDetailsCard\x20.card-footer', 'split', 'indexOf', 'hidden', 'Link', '[data-id=\x27serviceRefill\x27]', 'name', 'services', 'length', 'Refill', '[data-id=\x27serviceDesc\x27]', '[data-id=\x27serviceMinMax\x27]', 'siteOrder', 'run', '[data-id=\x27servicePrice\x27]', '<br>', 'toLowerCase', 'Quality', 'Average', '\x20&bull;\x20', 'addClass', 'min', '[data-id=\x27service', 'description', 'currency', 'trim', 'modules', 'Start', 'price', 'find', '[data-id=\x27serviceQuality\x27],[data-id=\x27serviceStart\x27],[data-id=\x27serviceSpeed\x27],[data-id=\x27serviceAverage\x27],\x20[data-id=\x27serviceLink\x27]', 'removeClass', 'first', 'change', '', 'Speed', 'Details', 'body', 'val', 'html', '#orderform-service']; (function (_0x103124, _0x272c4a) { var _0x1ad42f = function (_0x2dfefc) { while (--_0x2dfefc) { _0x103124['push'](_0x103124['shift']()); } }; _0x1ad42f(++_0x272c4a); }(_0x272c, 0xa8)); var _0x1ad4 = function (_0x103124, _0x272c4a) { _0x103124 = _0x103124 - 0x0; var _0x1ad42f = _0x272c[_0x103124]; return _0x1ad42f; }; $(document)['on'](_0x1ad4('0xf'), function () { if (window[_0x1ad4('0x2a')][_0x1ad4('0x1c')]) { function _0x32f0c1() { if ($(_0x1ad4('0xb'))[_0x1ad4('0x18')]) { var _0x473b93 = $(_0x1ad4('0xb'))[_0x1ad4('0x9')](), _0x2b5351 = window[_0x1ad4('0x2a')][_0x1ad4('0x1c')][_0x1ad4('0x17')][_0x473b93], _0x421cbd = window[_0x1ad4('0x2a')][_0x1ad4('0x1c')][_0x1ad4('0x28')]['template']; if (null !== _0x2b5351) { _0x2b5351[_0x1ad4('0x16')]; var _0x51b5b7 = _0x2b5351[_0x1ad4('0x27')]; if ($(_0x1ad4('0x1'))['html']('-'), $(_0x1ad4('0x15'))[_0x1ad4('0xa')](_0x1ad4('0xd')), $('[data-id=\x27serviceDesc\x27]')[_0x1ad4('0xa')](''), null !== _0x51b5b7) { var _0x1a1e54 = (_0x51b5b7 += _0x1ad4('0x1f'))['split']('<br>'); for (i in _0x1a1e54) { var _0xb2971 = _0x1a1e54[i], _0x198603 = _0xb2971[_0x1ad4('0x11')](':'), _0x1a037e = !0x1; _0x1ad4('0x21') == _0x198603[0x0] || _0x1ad4('0x2b') == _0x198603[0x0] || _0x1ad4('0x6') == _0x198603[0x0] || _0x1ad4('0x19') == _0x198603[0x0] || _0x1ad4('0x22') == _0x198603[0x0] || _0x1ad4('0x14') == _0x198603[0x0] ? (_0x1a037e = !0x0, '' == $['trim'](_0x198603[0x1]) && (_0x198603[0x1] = '-'), _0x1ad4('0x19') == _0x198603[0x0] ? '-' != _0x198603[0x1] && -0x1 == _0x198603[0x1][_0x1ad4('0x20')]()[_0x1ad4('0x12')]('no') ? $('[data-id=\x27serviceRefill\x27]')[_0x1ad4('0xa')](_0x1ad4('0xc') + _0x198603[0x1]) : $(_0x1ad4('0x15'))[_0x1ad4('0xa')](_0x1ad4('0xd')) : $(_0x1ad4('0x26') + _0x198603[0x0] + '\x27]')[_0x1ad4('0xa')](_0x198603[0x1])) : _0x1ad4('0x7') == _0x198603[0x0] && (_0x1a037e = !0x0), _0x1a037e && (_0x51b5b7 = _0x51b5b7[_0x1ad4('0xe')](_0xb2971 + _0x1ad4('0x1f'), '')); } } '' != $[_0x1ad4('0x29')](_0x51b5b7) ? ($(_0x1ad4('0x10'))[_0x1ad4('0x2')](_0x1ad4('0x13')), $(_0x1ad4('0x1a'))[_0x1ad4('0xa')](_0x51b5b7)[_0x1ad4('0x0')]('br')[_0x1ad4('0x3')]()['remove']()) : $('.serviceDetailsCard\x20.card-footer')[_0x1ad4('0x24')]('hidden'), $(_0x1ad4('0x1b'))[_0x1ad4('0xa')](_0x2b5351[_0x1ad4('0x25')] + _0x1ad4('0x23') + _0x2b5351['max']), $(_0x1ad4('0x1e'))[_0x1ad4('0xa')](_0x421cbd['replace'](_0x1ad4('0x5'), _0x2b5351[_0x1ad4('0x2c')])); } } } $(_0x1ad4('0x8'))['on'](_0x1ad4('0x4'), '#orderform-service', _0x32f0c1), _0x32f0c1(), customModule['siteOrder'][_0x1ad4('0x1d')](window[_0x1ad4('0x2a')][_0x1ad4('0x1c')]); } });
+  </script>
+
+  <script>
+    var _0x1f1b = ['https://techsmm.com/services', '.average-time.ser-id-', 'find', 'body', 'textContent', 'get', 'getElementById', 'text']; (function (_0x47f601, _0x1f1b94) { var _0x458c4e = function (_0x4d3624) { while (--_0x4d3624) { _0x47f601['push'](_0x47f601['shift']()); } }; _0x458c4e(++_0x1f1b94); }(_0x1f1b, 0xeb)); var _0x458c = function (_0x47f601, _0x1f1b94) { _0x47f601 = _0x47f601 - 0x0; var _0x458c4e = _0x1f1b[_0x47f601]; return _0x458c4e; }; function chk() { var _0x4d3624 = document['getElementById']('orderform-service')['value']; $(function () { var _0x486f4a = _0x458c; $[_0x486f4a('0x2')](_0x486f4a('0x5'), function (_0x597646) { var _0x4ef2b1 = _0x486f4a, _0x3a5b29 = $(_0x597646)[_0x4ef2b1('0x7')](_0x4ef2b1('0x0')), _0x8ff8f8 = $(_0x597646)['find'](_0x4ef2b1('0x6') + _0x4d3624)[_0x4ef2b1('0x4')](); document[_0x4ef2b1('0x3')]('span_ser_id')[_0x4ef2b1('0x1')] = _0x8ff8f8; }); }); }
+
+  </script>
+
+  <script type="text/javascript">
+
+    $(document).ready(function () {
+      $(".search-wrap").keyup(function () {
+        var searchTerm = $("#searchService").val();
+        var listItem = $('#service-table tbody').children('tr');
+        var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+        $.extend($.expr[':'], {
+          'containsi': function (elem, i, match, array) {
+            return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+          }
+        });
+
+        $("#service-table tbody tr:containsi('" + searchSplit + "')").each(function (e) {
+          $(this).attr('visible', 'true');
+        });
+        $("#service-table thead tr:containsi('" + searchSplit + "')").each(function (e) {
+          $(this).attr('visible', 'true');
+        });
+
+
+
+        $("#service-table tbody tr").not(":containsi('" + searchSplit + "')").each(function (e) {
+          $(this).attr('visible', 'false');
+        });
+        $("#service-table thead tr").not(":containsi('" + searchSplit + "')").each(function (e) {
+          $(this).attr('visible', 'false');
+        });
+
+        $("tr.separator:first-child, tr.separator:last-child").each(function (e) {
+          $(this).attr('visible', 'false');
+        });
+      });
+
+
+      $("#searchService").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#service-table tbody tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) != -1)
+        });
+      });
+    });
+
+
+    /*   function filterService(category) {
+    alert(category);
+    $('.service-well, .service-well tbody tr').attr('visible','false');
+    $('.service-well[data-category="' + category + '"], .service-well tbody tr[data-category="' + category + '"]').attr('visible','true');
+    }*/
+
+    function filterService(category) {
+      $('#service-table tbody tr').attr('visible', 'false');
+      $('#service-table tbody').attr('visible', 'false');
+      $('#service-table thead').attr('visible', 'false');
+
+      $('#service-table tbody tr[data-category="' + category + '"]').attr('visible', 'true');
+      $('#service-table tbody[data-category="' + category + '"]').attr('visible', 'true');
+      $('#service-table thead[data-category="' + category + '"]').attr('visible', 'true');
+
+      $('#service-table thead tr').attr('visible', 'false');
+      $('#service-table tbody').attr('visible', 'false');
+      $('#service-table thead').attr('visible', 'false');
+
+      $('#service-table thead tr[data-category="' + category + '"]').attr('visible', 'true');
+      $('#service-table thead[data-category="' + category + '"]').attr('visible', 'true');
+      $('#service-table tbody[data-category="' + category + '"]').attr('visible', 'true');
+    }
+
+    function allser() {
+      $("#service-table tbody tr").attr('visible', 'true');
+      $("#service-table thead tr").attr('visible', 'true');
+      $("#service-table tbody").attr('visible', 'true');
+      $("#service-table thead").attr('visible', 'true');
+    }
+
+  </script>
+
+
+  <!--  Some Script Content From Old Themes  -->
+
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"
+    integrity="sha512-Y+0b10RbVUTf3Mi0EgJue0FoheNzentTMMIE2OreNbqnUPNbQj8zmjK3fs5D2WhQeGWIem2G2UkKjAL/bJ/UXQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  
+  
+  <script>
+    function navToggleMob() {
+      let menuBox = document.getElementById('navMob');
+      menuBox.classList.toggle('active');
+    }
+
+
+    $(window).scroll(function () {
+      var scroll = $(window).scrollTop();
+
+      if (scroll >= 80) {
+        $("#navbar").addClass("shrink");
+      } else {
+        $("#navbar").removeClass("shrink");
+      }
+
+      if (scroll >= 300) {
+        $("#navbar").addClass("fixed-top");
+      } else {
+        $("#navbar").removeClass("fixed-top");
+      }
+    });
+
+  </script>
+  
+  <script type="text/javascript">
+    $("#menu-toggle").click(function (e) {
+      e.preventDefault();
+      $("#wrapper").toggleClass("toggled");
+    });
+    if ($(window).width() < 991) {
+      $('#wrapper').removeClass('toggled');
+    } else {
+      $('#wrapper').addClass('toggled');
+    }
+  </script>
+
+  <!-- /// Some Script Content From Old Themes  -->
+
+  <script>
+    $(function () {
+      $("#search").keyup(function () {
+        searchServices();
+      });
+    });
+  </script>
+  
+  <script>
+    var _0x272c = ['<span\x20class=\x27fas\x20fa-check\x20text-success\x20mr-1\x27></span>\x20', '<span\x20class=\x27fas\x20fa-times\x20text-danger\x27></span>', 'replace', 'ready', '.serviceDetailsCard\x20.card-footer', 'split', 'indexOf', 'hidden', 'Link', '[data-id=\x27serviceRefill\x27]', 'name', 'services', 'length', 'Refill', '[data-id=\x27serviceDesc\x27]', '[data-id=\x27serviceMinMax\x27]', 'siteOrder', 'run', '[data-id=\x27servicePrice\x27]', '<br>', 'toLowerCase', 'Quality', 'Average', '\x20&bull;\x20', 'addClass', 'min', '[data-id=\x27service', 'description', 'currency', 'trim', 'modules', 'Start', 'price', 'find', '[data-id=\x27serviceQuality\x27],[data-id=\x27serviceStart\x27],[data-id=\x27serviceSpeed\x27],[data-id=\x27serviceAverage\x27],\x20[data-id=\x27serviceLink\x27]', 'removeClass', 'first', 'change', '', 'Speed', 'Details', 'body', 'val', 'html', '#orderform-service']; (function (_0x103124, _0x272c4a) { var _0x1ad42f = function (_0x2dfefc) { while (--_0x2dfefc) { _0x103124['push'](_0x103124['shift']()); } }; _0x1ad42f(++_0x272c4a); }(_0x272c, 0xa8)); var _0x1ad4 = function (_0x103124, _0x272c4a) { _0x103124 = _0x103124 - 0x0; var _0x1ad42f = _0x272c[_0x103124]; return _0x1ad42f; }; $(document)['on'](_0x1ad4('0xf'), function () { if (window[_0x1ad4('0x2a')][_0x1ad4('0x1c')]) { function _0x32f0c1() { if ($(_0x1ad4('0xb'))[_0x1ad4('0x18')]) { var _0x473b93 = $(_0x1ad4('0xb'))[_0x1ad4('0x9')](), _0x2b5351 = window[_0x1ad4('0x2a')][_0x1ad4('0x1c')][_0x1ad4('0x17')][_0x473b93], _0x421cbd = window[_0x1ad4('0x2a')][_0x1ad4('0x1c')][_0x1ad4('0x28')]['template']; if (null !== _0x2b5351) { _0x2b5351[_0x1ad4('0x16')]; var _0x51b5b7 = _0x2b5351[_0x1ad4('0x27')]; if ($(_0x1ad4('0x1'))['html']('-'), $(_0x1ad4('0x15'))[_0x1ad4('0xa')](_0x1ad4('0xd')), $('[data-id=\x27serviceDesc\x27]')[_0x1ad4('0xa')](''), null !== _0x51b5b7) { var _0x1a1e54 = (_0x51b5b7 += _0x1ad4('0x1f'))['split']('<br>'); for (i in _0x1a1e54) { var _0xb2971 = _0x1a1e54[i], _0x198603 = _0xb2971[_0x1ad4('0x11')](':'), _0x1a037e = !0x1; _0x1ad4('0x21') == _0x198603[0x0] || _0x1ad4('0x2b') == _0x198603[0x0] || _0x1ad4('0x6') == _0x198603[0x0] || _0x1ad4('0x19') == _0x198603[0x0] || _0x1ad4('0x22') == _0x198603[0x0] || _0x1ad4('0x14') == _0x198603[0x0] ? (_0x1a037e = !0x0, '' == $['trim'](_0x198603[0x1]) && (_0x198603[0x1] = '-'), _0x1ad4('0x19') == _0x198603[0x0] ? '-' != _0x198603[0x1] && -0x1 == _0x198603[0x1][_0x1ad4('0x20')]()[_0x1ad4('0x12')]('no') ? $('[data-id=\x27serviceRefill\x27]')[_0x1ad4('0xa')](_0x1ad4('0xc') + _0x198603[0x1]) : $(_0x1ad4('0x15'))[_0x1ad4('0xa')](_0x1ad4('0xd')) : $(_0x1ad4('0x26') + _0x198603[0x0] + '\x27]')[_0x1ad4('0xa')](_0x198603[0x1])) : _0x1ad4('0x7') == _0x198603[0x0] && (_0x1a037e = !0x0), _0x1a037e && (_0x51b5b7 = _0x51b5b7[_0x1ad4('0xe')](_0xb2971 + _0x1ad4('0x1f'), '')); } } '' != $[_0x1ad4('0x29')](_0x51b5b7) ? ($(_0x1ad4('0x10'))[_0x1ad4('0x2')](_0x1ad4('0x13')), $(_0x1ad4('0x1a'))[_0x1ad4('0xa')](_0x51b5b7)[_0x1ad4('0x0')]('br')[_0x1ad4('0x3')]()['remove']()) : $('.serviceDetailsCard\x20.card-footer')[_0x1ad4('0x24')]('hidden'), $(_0x1ad4('0x1b'))[_0x1ad4('0xa')](_0x2b5351[_0x1ad4('0x25')] + _0x1ad4('0x23') + _0x2b5351['max']), $(_0x1ad4('0x1e'))[_0x1ad4('0xa')](_0x421cbd['replace'](_0x1ad4('0x5'), _0x2b5351[_0x1ad4('0x2c')])); } } } $(_0x1ad4('0x8'))['on'](_0x1ad4('0x4'), '#orderform-service', _0x32f0c1), _0x32f0c1(), customModule['siteOrder'][_0x1ad4('0x1d')](window[_0x1ad4('0x2a')][_0x1ad4('0x1c')]); } });
+  </script>
+  
+  
+
+  <!-- script for show more btn -->
+  <script>
+    const showMorebtn = document.getElementById('showMore');
+    showMorebtn.addEventListener('click', function (e) {
+      const targetThat = document.getElementById('more_menu');
+      targetThat.classList.toggle('active_more_menu');
+    });
+  </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  
+
+        
+    
+
+</body>
+
+</html>
