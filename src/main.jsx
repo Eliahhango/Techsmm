@@ -11,6 +11,7 @@ function sourceForPath(pathname, search = '') {
   clean = clean.replace(/^services\.html\//i, '')
   clean = clean.replace(/\.html\.html$/i, '.html')
   if (clean.toLowerCase() === 'blog/index.html') clean = 'blog.html'
+  if (clean === 'api' && isLoggedIn) return 'api-dashboard.html'
   if (clean === 'blog') {
     const page = new URLSearchParams(search).get('page')
     if (page && /^\d+(?:\.html)?$/.test(page)) return `blog-page-${page.replace(/\.html$/, '')}.html`
@@ -611,7 +612,7 @@ function Page() {
           .then((data) => {
             if (data.token) {
               localStorage.setItem('token', data.token)
-              window.history.pushState({}, '', '/dashboard')
+              window.history.pushState({}, '', '/')
               window.dispatchEvent(new PopStateEvent('popstate'))
             } else {
               alert(data.error || 'Registration failed')
@@ -634,7 +635,7 @@ function Page() {
           .then((data) => {
             if (data.token) {
               localStorage.setItem('token', data.token)
-              window.history.pushState({}, '', '/dashboard')
+              window.history.pushState({}, '', '/')
               window.dispatchEvent(new PopStateEvent('popstate'))
             } else {
               alert(data.error || 'Login failed')
