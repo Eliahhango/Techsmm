@@ -10,7 +10,7 @@ const app = express();
 const PORT = 4000;
 const JWT_SECRET = 'techsmm-tz-secret-key-2026';
 const TECHSMM_API = 'https://techsmm.com/api/v2';
-const TECHSMM_KEY = '7d25b47d8b80cb60127b5f1d140ef292';
+const TECHSMM_KEY = '1fe627bc17efe5a0cd74ee6ed49b2832';
 const MARKUP_MULTIPLIER = 3; // 3x price markup for profit
 
 // ─── Database ──────────────────────────────────────────────
@@ -136,6 +136,9 @@ async function getServices() {
   return services;
 }
 
+// Clear stale services cache on startup
+db.prepare('DELETE FROM services_cache').run();
+
 function convertServices(services) {
   const rate = db.prepare('SELECT rate FROM exchange_rate WHERE id = 1').get()?.rate || 2500;
   return services.map(s => ({
@@ -193,8 +196,8 @@ app.get('/api/me', authMiddleware, (req, res) => {
   res.json({ user });
 });
 
-// Get services (with TZS conversion)
-app.get('/api/services', authMiddleware, async (req, res) => {
+// Get services (with TZS conversion) - public endpoint
+app.get('/api/services', async (req, res) => {
   try {
     const services = await getServices();
     if (!Array.isArray(services)) return res.status(500).json({ error: 'Failed to fetch services' });
@@ -218,6 +221,34 @@ app.get('/api/services', authMiddleware, async (req, res) => {
 app.get('/api/exchange-rate', authMiddleware, async (req, res) => {
   const rate = await getExchangeRate();
   res.json({ rate, markup: MARKUP_MULTIPLIER, currency: 'TZS' });
+});
+
+// Search services by query string - public endpoint
+app.get('/api/services/search', async (req, res) => {
+  try {
+    const q = (req.query.q || '').toLowerCase().trim();
+    if (!q) return res.json({ services: [] });
+    const services = await getServices();
+    if (!Array.isArray(services)) return res.json({ services: [] });
+    const rate = db.prepare('SELECT rate FROM exchange_rate WHERE id = 1').get()?.rate || 2500;
+    const results = services
+      .filter(s => (s.name || '').toLowerCase().includes(q) || String(s.service).includes(q) || (s.category || '').toLowerCase().includes(q))
+      .slice(0, 50)
+      .map(s => ({
+        service: s.service,
+        name: s.name,
+        category: s.category,
+        rate: s.rate,
+        rate_tzs: Math.ceil(parseFloat(s.rate) * rate * MARKUP_MULTIPLIER),
+        min: s.min,
+        max: s.max,
+        refill: s.refill,
+        cancel: s.cancel,
+      }));
+    res.json({ services: results });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // Deposit: create deposit request

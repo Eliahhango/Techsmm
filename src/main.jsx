@@ -134,6 +134,167 @@ async function replacePricesWithTZS(doc) {
   } catch { }
 }
 
+// ─── Dynamic Order Form: fetch services from API ──────────
+async function setupDynamicOrderForm(doc) {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const resp = await fetch('/api/services', { headers: { Authorization: `Bearer ${token}` } })
+    if (!resp.ok) return
+    const data = await resp.json()
+    if (!data.categories) return
+
+    const categories = data.categories
+    const catNames = Object.keys(categories)
+
+    // Populate category dropdown
+    const catSelect = doc.querySelector('#orderform-category')
+    if (catSelect) {
+      catSelect.innerHTML = ''
+      catNames.forEach((cat, i) => {
+        const opt = doc.createElement('option')
+        opt.value = cat
+        opt.textContent = cat
+        if (i === 0) opt.selected = true
+        catSelect.appendChild(opt)
+      })
+    }
+
+    // Populate service dropdown for selected category
+    const serviceSelect = doc.querySelector('#orderform-service')
+    function populateServices(category) {
+      if (!serviceSelect) return
+      const services = categories[category] || []
+      serviceSelect.innerHTML = ''
+      services.forEach(s => {
+        const opt = doc.createElement('option')
+        opt.value = s.service
+        opt.textContent = `[${s.service}] ${s.name} - $${s.rate} per 1000`
+        opt.dataset.rate = s.rate
+        opt.dataset.min = s.min
+        opt.dataset.max = s.max
+        opt.dataset.name = s.name
+        serviceSelect.appendChild(opt)
+      })
+      // Update min/max display
+      if (services.length > 0) {
+        const s = services[0]
+        const minMaxEl = doc.querySelector('[data-id="serviceMinMax"]') || doc.querySelector('.min_max')
+        if (minMaxEl) minMaxEl.textContent = `Min: ${s.min} - Max: ${s.max.toLocaleString()}`
+        const priceEl = doc.querySelector('[data-id="servicePrice"]') || doc.querySelector('.service_price')
+        if (priceEl) priceEl.textContent = `$${s.rate} per 1000`
+      }
+    }
+
+    if (catNames.length > 0) populateServices(catNames[0])
+
+    // On category change
+    if (catSelect) {
+      catSelect.addEventListener('change', (e) => {
+        populateServices(e.target.value)
+      })
+    }
+
+    // On service change - update details
+    if (serviceSelect) {
+      serviceSelect.addEventListener('change', (e) => {
+        const opt = e.target.selectedOptions[0]
+        if (!opt) return
+        const minMaxEl = doc.querySelector('[data-id="serviceMinMax"]') || doc.querySelector('.min_max')
+        if (minMaxEl) minMaxEl.textContent = `Min: ${opt.dataset.min} - Max: ${Number(opt.dataset.max).toLocaleString()}`
+        const minMaxDisplay = doc.querySelector('#min-max-display')
+        if (minMaxDisplay) minMaxDisplay.textContent = `Min: ${opt.dataset.min} - Max: ${Number(opt.dataset.max).toLocaleString()}`
+        const priceEl = doc.querySelector('[data-id="servicePrice"]') || doc.querySelector('.service_price')
+        if (priceEl) priceEl.textContent = `$${opt.dataset.rate} per 1000`
+        // Set min/max on quantity input
+        const qtyInput = doc.querySelector('#orderform-quantity')
+        if (qtyInput) { qtyInput.min = opt.dataset.min; qtyInput.max = opt.dataset.max }
+      })
+    }
+
+    // Handle order form submission
+    const orderForm = doc.querySelector('#order-form')
+    if (orderForm) {
+      orderForm.addEventListener('submit', async (e) => {
+        e.preventDefault()
+        const serviceId = serviceSelect?.value
+        const link = doc.querySelector('#orderform-link')?.value?.trim()
+        const quantity = doc.querySelector('#orderform-quantity')?.value
+        if (!serviceId || !link || !quantity) { alert('Please fill in all fields'); return }
+        try {
+          const resp = await fetch('/api/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ service_id: Number(serviceId), link, quantity: Number(quantity) })
+          })
+          const data = await resp.json()
+          if (data.error) { alert(data.error); return }
+          alert('Order placed successfully! Order ID: ' + (data.order_id || data.techsmm_order_id || ''))
+          window.location.reload()
+        } catch (err) { alert('Order failed: ' + err.message) }
+      })
+    }
+
+    // Setup search box
+    const searchInput = doc.querySelector('#template-input') || doc.querySelector('#new-order-search input')
+    const searchDropdown = doc.querySelector('#new-order-search')
+    if (searchInput && searchDropdown) {
+      // Create results container
+      let resultsDiv = searchDropdown.querySelector('.search-results')
+      if (!resultsDiv) {
+        resultsDiv = doc.createElement('div')
+        resultsDiv.className = 'search-results'
+        resultsDiv.style.cssText = 'position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border:1px solid #333;border-radius:8px;max-height:400px;overflow-y:auto;z-index:9999;display:none;'
+        searchDropdown.appendChild(resultsDiv)
+      }
+
+      let debounceTimer
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer)
+        const q = e.target.value.trim()
+        if (q.length < 2) { resultsDiv.style.display = 'none'; return }
+        debounceTimer = setTimeout(async () => {
+          try {
+            const sr = await fetch(`/api/services/search?q=${encodeURIComponent(q)}`, { headers: { Authorization: `Bearer ${token}` } })
+            if (!sr.ok) return
+            const sd = await sr.json()
+            if (!sd.services || sd.services.length === 0) { resultsDiv.style.display = 'none'; return }
+            resultsDiv.innerHTML = ''
+            sd.services.forEach(s => {
+              const item = doc.createElement('div')
+              item.className = 'search-result-item'
+              item.style.cssText = 'padding:10px 14px;cursor:pointer;border-bottom:1px solid #333;display:flex;align-items:center;gap:10px;color:#fff;font-size:13px;'
+              item.innerHTML = `<span style="background:#f97316;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${s.service}</span> <span>${s.name} - $${s.rate} per 1000</span>`
+              item.addEventListener('mouseenter', () => item.style.background = '#2a2a3e')
+              item.addEventListener('mouseleave', () => item.style.background = 'transparent')
+              item.addEventListener('click', () => {
+                // Set category and service
+                if (catSelect) {
+                  const catOpt = Array.from(catSelect.options).find(o => o.value === s.category)
+                  if (catOpt) { catSelect.value = s.category; catSelect.dispatchEvent(new Event('change')) }
+                }
+                if (serviceSelect) {
+                  const svcOpt = Array.from(serviceSelect.options).find(o => o.value == s.service)
+                  if (svcOpt) { serviceSelect.value = s.service; serviceSelect.dispatchEvent(new Event('change')) }
+                }
+                searchInput.value = s.name
+                resultsDiv.style.display = 'none'
+              })
+              resultsDiv.appendChild(item)
+            })
+            resultsDiv.style.display = 'block'
+          } catch { }
+        }, 300)
+      })
+
+      // Close dropdown on outside click
+      doc.addEventListener('click', (e) => {
+        if (!searchDropdown.contains(e.target)) resultsDiv.style.display = 'none'
+      })
+    }
+  } catch { }
+}
+
 // ─── Fetch deposits for logged-in user ─────────────────────
 async function populateDeposits(doc) {
   try {
@@ -350,7 +511,12 @@ function Page() {
         // Replace USD prices with TZS (3x markup) in services tables
         await replacePricesWithTZS(document)
 
+        // Setup dynamic order form (search + service dropdown) on new order page
         const pathname = window.location.pathname
+        if (pathname === '/' || pathname === '') {
+          await setupDynamicOrderForm(document)
+        }
+
         // Populate deposit history
         if (pathname.includes('/addfunds')) {
           await populateDeposits(document)
