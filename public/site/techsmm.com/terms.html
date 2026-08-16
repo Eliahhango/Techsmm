@@ -128,93 +128,262 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 </head>
 
-<body class="noAuth" >
-      <nav class="navbar navbar-expand-lg navbar-light bg-light navbar-static-top" id="navbar">
-      <div class="container">
-        <a class="navbar-brand" href="/">
-          <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" alt="Tech SMM" title="">
-        </a>
-        <button class="navbar-toggler nav__icons" type="button" onclick="navToggleMob()">
-          <img src="https://storage.perfectcdn.com/hmz1fi/gfaiw2lpy4sb6xan.png" class="img-fluid" alt="">
+<body class="dashboard" id="body">
+  <main id="main_container">
+    <div class="d-none mob_bg_closer_sidebar" onclick="toggleSidebar()"></div>
+    <div class="sidebar">
+      <div class="sidebar_top">
+        <button class="close_btn_phone" onclick="toggleSidebar()">
+          <i class="fas fa-times"></i>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                                    <li class="nav-item d-flex align-items-center">
-              <a class="nav-link " aria-current="page"
-                href="/" >
-                                <i class="navbar-icon fas fa-address-book"></i>
-                                Sign in
-              </a>
-            </li>
-                                                                                    <li class="nav-item d-flex align-items-center">
-              <a class="nav-link " aria-current="page"
-                href="/blog" >
-                                <i class="navbar-icon fas fa-address-card"></i>
-                                Blog
-              </a>
-            </li>
-                                                <li class="nav-item d-flex align-items-center">
-              <a class="nav-link " aria-current="page"
-                href="/api" >
-                                <i class="navbar-icon fas fa-wifi"></i>
-                                API
-              </a>
-            </li>
-                                                <li class="nav-item d-flex align-items-center">
-              <a class="nav-link " aria-current="page"
-                href="/faq" >
-                                <i class="navbar-icon fas fa-bible"></i>
-                                FAQ
-              </a>
-            </li>
-                                    <li class="nav-item btn__sp__nav">
-              <a href="/signup" class="btn btn-primary btn-gradient">
-                <span class="sp__icon">
-                  <i class="fas fa-user"></i>
-                </span>
-                <span class="btn__txt">
-                  Sign Up
-                </span>
-              </a>
-            </li>
-          </ul>
+        <div class="logo">
+          <a href="/">
+            <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="logo_img img-fluid" alt="Tech SMM" title="Tech SMM">
+          </a>
         </div>
+        <div class="user_data">
+          <div class="user_badges" data-bs-toggle="modal" data-bs-target="#GGstaticBackdrop">
+            <h4>
+                            NEW
+                          </h4>
+          </div>
+          <div class="total_data">
+            <div class="user_wrap">
+              <div class="v2_avatar">
+                <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" class="img-fluid"
+                  alt="Tech SMM Avatar" id="profile1">
+              </div>
+              <div class="v2_user_info">
+                <h5>elitechwiz</h5>
+              </div>
+            </div>
+            <div class="user_balance">
+              <span class="balance">$0.15</span>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </nav>
-    <div id="navMob">
-      <button id="cls" onclick="navToggleMob()"><i class="fas fa-times"></i></button>
-      <div class="nav_content">
-        <div class="menu">
-          <ul class="menu_mobs">
-                        <li><a href="/" >
-                                <i class="navbar-icon fas fa-address-book"></i>
-                                Sign in
-              </a></li>
-                        <li><a href="/signup" >
-                                <i class="navbar-icon far fa-address-book"></i>
-                                Sign up
-              </a></li>
-                        <li><a href="/blog" >
-                                <i class="navbar-icon fas fa-address-card"></i>
-                                Blog
-              </a></li>
-                        <li><a href="/api" >
-                                <i class="navbar-icon fas fa-wifi"></i>
-                                API
-              </a></li>
-                        <li><a href="/faq" >
-                                <i class="navbar-icon fas fa-bible"></i>
-                                FAQ
-              </a></li>
-                      </ul>
-        </div>
-        <div class="btn">
-          <a href="/">Sign in</a>
-          <a href="/signup">Sign up <span class="btn_icon"><i class="fas fa-arrow-right"></i></span></a>
+      <div class="sidebar_bottom">
+        <div class="sidebar_menu">
+                              <a href="/" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+                        <div class="menu_name">
+              New order
+            </div>
+          </a>
+          
+                              <a href="/orders" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-history"></i>
+            </div>
+                        <div class="menu_name">
+              Orders History
+            </div>
+          </a>
+          
+                              <a href="/massorder" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-list-ol"></i>
+            </div>
+                        <div class="menu_name">
+              Bulk Order
+            </div>
+          </a>
+          
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+          
+                    
+                    
+                    
+                              <a href="/services" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-server"></i>
+            </div>
+                        <div class="menu_name">
+              Services
+            </div>
+          </a>
+          
+                              <a href="/addfunds" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-hand-holding-usd"></i>
+            </div>
+                        <div class="menu_name">
+              Add funds
+            </div>
+          </a>
+          
+                              <a href="/tickets" class="menu_item " >
+                        <div class="menu_icon">
+              <i class="fas fa-comments"></i>
+            </div>
+                        <div class="menu_name">
+              Tickets Support
+            </div>
+          </a>
+          
+                    
+                    
+                    
+                    
+          
+          <!-- Show More Btn Codes Start -->
+          <div id="show_more_wrap">
+            <button type="button" class="" id="showMore">
+              <div class="menu_name">
+                Show More
+              </div>
+              <div class="menu_icon">
+                <i class="far fa-caret-circle-down"></i>
+              </div>
+            </button>
+
+          </div>
+
+          <div id="more_menu">
+                                                                                                                                                                                                                                                            <a href="/child-panel" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-child"></i>
+              </div>
+                            <div class="menu_name">
+                Child panel
+              </div>
+            </a>
+                                                <a href="/dashboard" class="menu_item active" >
+                            <div class="menu_icon">
+                <i class="fas fa-tachometer-alt"></i>
+              </div>
+                            <div class="menu_name">
+                Dashboard
+              </div>
+            </a>
+                                                <a href="/updates" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-bell"></i>
+              </div>
+                            <div class="menu_name">
+                Updates
+              </div>
+            </a>
+                                                <a href="/api" class="menu_item " >
+                            <div class="menu_icon">
+                <i class="fas fa-wifi"></i>
+              </div>
+                            <div class="menu_name">
+                API
+              </div>
+            </a>
+                                  </div>
+          <!-- Show More Btn Codes End -->
         </div>
       </div>
     </div>
-          <main id="notLogin">
+            
+  <div class="content_area">
+      <div class="top_header">
+        <div class="top_head_wrap">
+          <div class="item">
+            <button class="sidebar_menu_icon" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo_off_nav">
+              <a href="/">
+                <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="img-fluid" alt="">
+              </a>
+            </div>
+          </div>
+          <div class="item">
+
+          </div>
+          <div class="item user_settings">
+
+            
+            <a href="javascript:void(0)" class="day_night_btn" onclick="toggleThemeMode()">
+              <span class="active_circle"></span>
+              <span class="night_mode"> <i class="fas fa-moon"></i> </span>
+              <span class="day_mode"><i class="fas fa-sun"></i></span>
+            </a>
+            <div class="dropdown">
+              <button class="btn btn-secondarybtn_profiles" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <span class="user_top_avatar">
+                  <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" width="40px" class="img-fluid" alt=""
+                    id="profile2">
+                </span>
+              </button>
+
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+                    <a href="/">
+                      <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="img-fluid offcanvas_site_logo" alt="">
+                    </a>
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <div>
+                    <div class="user_data mb-3">
+                      <div class="user_badges" data-bs-toggle="modal" data-bs-target="#GGstaticBackdrop">
+                        <h4>
+                                                    NEW
+                                                  </h4>
+                      </div>
+                      <div class="total_data">
+                        <div class="user_wrap">
+                          <div class="v2_avatar">
+                            <img src="https://storage.perfectcdn.com/hmz1fi/xnihm05yyakf6ouk.png" class="img-fluid"
+                              alt="Tech SMM Avatar" id="profile1">
+                          </div>
+                          <div class="v2_user_info">
+                            <h5>elitechwiz</h5>
+                          </div>
+                        </div>
+                        <div class="user_balance">
+                          <span class="balance">$0.15</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="user_menu_wraper">
+                      <div class="user__menu">
+                        <a class="user_menu__item" href="/account">
+                          <span class="user_menu_icon"><i class="fas fa-cog"></i></span>
+                          <span class="user_menu_text">Settings</span>
+                        </a>
+    
+                        <a class="user_menu__item" href="/terms">
+                          <span class="user_menu_icon"><i class="fas fa-list"></i></span>
+                          <span class="user_menu_text">Terms</span>
+                        </a>
+                        <a class="user_menu__item" href="/faq">
+                          <span class="user_menu_icon"><i class="fas fa-question-circle"></i></span>
+                          <span class="user_menu_text">Faq</span>
+                        </a>
+                        <a class="user_menu__item" href="/logout">
+                          <span class="user_menu_icon"> <i class="fas fa-sign-out"></i></span>
+                          <span class="user_menu_text">Logout</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+  <div class="content">
+    <div id="page_info"></div>
+    
     <div id="terms" class=" mb-3 pt-5
     ">
         
@@ -351,6 +520,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </div>
 </div>
+  
+  </div>
   </main>
   
   
@@ -609,67 +780,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 
-  
-
-
-  <footer class="footer__v2">
-    <div class="container">
-
-      <div class="row">
-        <div class="col-lg-3 col-md-6 col-12">
-          <div class="logo__white">
-            <img src="https://storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" class="img-fluid" alt="">
-          </div>
-          <div class="infos__wrap">
-            <div class="infos__icon">
-              <iconify-icon icon="simple-line-icons:location-pin"></iconify-icon>
-            </div>
-            <div class="infos__txt">
-              <h6>Call Us: </h6>
-              <a href="tel:+8801728744283" class="inof__link">+8801728744283</a>
-            </div>
-          </div>
-
-          <div class="infos__wrap">
-            <div class="infos__icon">
-              <iconify-icon icon="clarity:email-solid"></iconify-icon>
-            </div>
-            <div class="infos__txt">
-              <h6>Email Us: </h6>
-              <a href="mailto:+techsmmoo1@gmail.com" class="inof__link">techsmmoo1@gmail.com</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-12">
-          <div class="foo__link__wraper">
-            <h4>Quick Links</h4>
-            <div class="foo__menu">
-              <a href="/">Home</a>
-              <a href="/services">Services</a>
-              <a href="/api">API</a>
-              <a href="/blog">Blog</a>
-              <a href="/signup">Sign Up</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-12">
-          <div class="foo__link__wraper">
-            <h4>Company</h4>
-            <div class="foo__menu">
-              <a href="/">Terms & Conditions</a>
-              <a href="/">Privacy Policy</a>
-              <a href="/faq">FAQ</a>
-              <a href="/">Contact Us</a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-12"></div>
-      </div>
-      <div class="hr-line mt-5"></div>
-      <h6 class="text-center text-white mb-0 mt-3">© copyright 2023 Tech SMM | All Rights Reserved</h6>
-    </div>
-  </footer>
-  
+    
   
 <a href="https://t.me/techsmmannouncement" target="_blank">
   <div id="myAliceWebChat"><div style="background: rgb(42, 171, 238); box-sizing: border-box; display: inline-flex; padding: 10px 14px; justify-content: center; align-items: center; color: rgb(255, 255, 255); cursor: pointer; border-radius: 20px; position: fixed; box-shadow: none; left: 20px; right: auto; bottom: 26px; z-index: 99999;"><svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M18.384,22.779c0.322,0.228 0.737,0.285 1.107,0.145c0.37,-0.141 0.642,-0.457 0.724,-0.84c0.869,-4.084 2.977,-14.421 3.768,-18.136c0.06,-0.28 -0.04,-0.571 -0.26,-0.758c-0.22,-0.187 -0.525,-0.241 -0.797,-0.14c-4.193,1.552 -17.106,6.397 -22.384,8.35c-0.335,0.124 -0.553,0.446 -0.542,0.799c0.012,0.354 0.25,0.661 0.593,0.764c2.367,0.708 5.474,1.693 5.474,1.693c0,0 1.452,4.385 2.209,6.615c0.095,0.28 0.314,0.5 0.603,0.576c0.288,0.075 0.596,-0.004 0.811,-0.207c1.216,-1.148 3.096,-2.923 3.096,-2.923c0,0 3.572,2.619 5.598,4.062Zm-11.01,-8.677l1.679,5.538l0.373,-3.507c0,0 6.487,-5.851 10.185,-9.186c0.108,-0.098 0.123,-0.262 0.033,-0.377c-0.089,-0.115 -0.253,-0.142 -0.376,-0.064c-4.286,2.737 -11.894,7.596 -11.894,7.596Z"></path></svg><span style="margin-left: 8px; font-style: normal; font-size: 14px; font-weight: 600; line-height: 20px;">Join</span></div></div>
@@ -690,13 +801,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <script type="text/javascript"  src="https://storage.perfectcdn.com/hmz1fi/farxtjet462wr6bi.js" >
       </script>
     <script type="text/javascript" >
-        window.modules.layouts = {"theme_id":1,"auth":0,"live":true,"csrftoken":"LOwLjdvE4y8lZ6pCjbTH-_cQ2yCOYJy2AFwvgj2NfwluiFy5raOnahIuySzsxIq2sFu9E7sr-dRiEmvhVssyQQ=="};
+        window.modules.layouts = {"theme_id":1,"auth":1,"live":true,"csrftoken":"g-447SwEIUcGrJwJO7R1w4Slbg_KAFiSDxO8icGr-SbpoFSse0J0I1zY7Thu3Dir1ss2TZU4Mdk6fPnxsOSDUg=="};
       </script>
     <script type="text/javascript" >
-        window._hvc = "eyJhbGdvcml0aG0iOiJTSEEtMjU2IiwiY2hhbGxlbmdlIjoiODc0ZGE4ZDQ5MWE5MmM5YzViNzIyNjY4MDVlNDQ5ZWRkYjRkOWYzMTRhMDNjZWZhYzRhYWY2ZThkNDVlNDBlNCIsIm1heG51bWJlciI6MTAwMCwic2FsdCI6ImM4NzU4M2JjYzNiNjBmYThhNjI0NDQwMj9leHBpcmVzPTE3ODY3ODU5MjMiLCJzaWduYXR1cmUiOiI4YjE0ZGRiZTVjYjFlOTI3NjIyYmQxN2U0MjJjMjRmNmMxMjI1OGQ5MjQ1MDdmYmFmNjYyNzQ0NjMzODA4YTRjIn0=";
-      </script>
-    <script type="text/javascript" >
-        window.modules.user_app_show_config = [];
+        window.modules.alerts = {"alerts":[]};
       </script>
     <script type="text/javascript" >
       </script>
@@ -817,8 +925,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
 
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"
+    integrity="sha512-Y+0b10RbVUTf3Mi0EgJue0FoheNzentTMMIE2OreNbqnUPNbQj8zmjK3fs5D2WhQeGWIem2G2UkKjAL/bJ/UXQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
   
   <script>
     function navToggleMob() {
@@ -844,8 +956,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
 
   </script>
-    
-
   
   <script type="text/javascript">
     $("#menu-toggle").click(function (e) {
@@ -869,6 +979,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   </script>
   
+  <script>
+    var _0x272c = ['<span\x20class=\x27fas\x20fa-check\x20text-success\x20mr-1\x27></span>\x20', '<span\x20class=\x27fas\x20fa-times\x20text-danger\x27></span>', 'replace', 'ready', '.serviceDetailsCard\x20.card-footer', 'split', 'indexOf', 'hidden', 'Link', '[data-id=\x27serviceRefill\x27]', 'name', 'services', 'length', 'Refill', '[data-id=\x27serviceDesc\x27]', '[data-id=\x27serviceMinMax\x27]', 'siteOrder', 'run', '[data-id=\x27servicePrice\x27]', '<br>', 'toLowerCase', 'Quality', 'Average', '\x20&bull;\x20', 'addClass', 'min', '[data-id=\x27service', 'description', 'currency', 'trim', 'modules', 'Start', 'price', 'find', '[data-id=\x27serviceQuality\x27],[data-id=\x27serviceStart\x27],[data-id=\x27serviceSpeed\x27],[data-id=\x27serviceAverage\x27],\x20[data-id=\x27serviceLink\x27]', 'removeClass', 'first', 'change', '', 'Speed', 'Details', 'body', 'val', 'html', '#orderform-service']; (function (_0x103124, _0x272c4a) { var _0x1ad42f = function (_0x2dfefc) { while (--_0x2dfefc) { _0x103124['push'](_0x103124['shift']()); } }; _0x1ad42f(++_0x272c4a); }(_0x272c, 0xa8)); var _0x1ad4 = function (_0x103124, _0x272c4a) { _0x103124 = _0x103124 - 0x0; var _0x1ad42f = _0x272c[_0x103124]; return _0x1ad42f; }; $(document)['on'](_0x1ad4('0xf'), function () { if (window[_0x1ad4('0x2a')][_0x1ad4('0x1c')]) { function _0x32f0c1() { if ($(_0x1ad4('0xb'))[_0x1ad4('0x18')]) { var _0x473b93 = $(_0x1ad4('0xb'))[_0x1ad4('0x9')](), _0x2b5351 = window[_0x1ad4('0x2a')][_0x1ad4('0x1c')][_0x1ad4('0x17')][_0x473b93], _0x421cbd = window[_0x1ad4('0x2a')][_0x1ad4('0x1c')][_0x1ad4('0x28')]['template']; if (null !== _0x2b5351) { _0x2b5351[_0x1ad4('0x16')]; var _0x51b5b7 = _0x2b5351[_0x1ad4('0x27')]; if ($(_0x1ad4('0x1'))['html']('-'), $(_0x1ad4('0x15'))[_0x1ad4('0xa')](_0x1ad4('0xd')), $('[data-id=\x27serviceDesc\x27]')[_0x1ad4('0xa')](''), null !== _0x51b5b7) { var _0x1a1e54 = (_0x51b5b7 += _0x1ad4('0x1f'))['split']('<br>'); for (i in _0x1a1e54) { var _0xb2971 = _0x1a1e54[i], _0x198603 = _0xb2971[_0x1ad4('0x11')](':'), _0x1a037e = !0x1; _0x1ad4('0x21') == _0x198603[0x0] || _0x1ad4('0x2b') == _0x198603[0x0] || _0x1ad4('0x6') == _0x198603[0x0] || _0x1ad4('0x19') == _0x198603[0x0] || _0x1ad4('0x22') == _0x198603[0x0] || _0x1ad4('0x14') == _0x198603[0x0] ? (_0x1a037e = !0x0, '' == $['trim'](_0x198603[0x1]) && (_0x198603[0x1] = '-'), _0x1ad4('0x19') == _0x198603[0x0] ? '-' != _0x198603[0x1] && -0x1 == _0x198603[0x1][_0x1ad4('0x20')]()[_0x1ad4('0x12')]('no') ? $('[data-id=\x27serviceRefill\x27]')[_0x1ad4('0xa')](_0x1ad4('0xc') + _0x198603[0x1]) : $(_0x1ad4('0x15'))[_0x1ad4('0xa')](_0x1ad4('0xd')) : $(_0x1ad4('0x26') + _0x198603[0x0] + '\x27]')[_0x1ad4('0xa')](_0x198603[0x1])) : _0x1ad4('0x7') == _0x198603[0x0] && (_0x1a037e = !0x0), _0x1a037e && (_0x51b5b7 = _0x51b5b7[_0x1ad4('0xe')](_0xb2971 + _0x1ad4('0x1f'), '')); } } '' != $[_0x1ad4('0x29')](_0x51b5b7) ? ($(_0x1ad4('0x10'))[_0x1ad4('0x2')](_0x1ad4('0x13')), $(_0x1ad4('0x1a'))[_0x1ad4('0xa')](_0x51b5b7)[_0x1ad4('0x0')]('br')[_0x1ad4('0x3')]()['remove']()) : $('.serviceDetailsCard\x20.card-footer')[_0x1ad4('0x24')]('hidden'), $(_0x1ad4('0x1b'))[_0x1ad4('0xa')](_0x2b5351[_0x1ad4('0x25')] + _0x1ad4('0x23') + _0x2b5351['max']), $(_0x1ad4('0x1e'))[_0x1ad4('0xa')](_0x421cbd['replace'](_0x1ad4('0x5'), _0x2b5351[_0x1ad4('0x2c')])); } } } $(_0x1ad4('0x8'))['on'](_0x1ad4('0x4'), '#orderform-service', _0x32f0c1), _0x32f0c1(), customModule['siteOrder'][_0x1ad4('0x1d')](window[_0x1ad4('0x2a')][_0x1ad4('0x1c')]); } });
+  </script>
+  
+  
 
   <!-- script for show more btn -->
   <script>
@@ -879,25 +994,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha512-iztkobsvnjKfAtTNdHkGVjAYTrrtlC7mGp/54c40wowO7LhURYl3gVzzcEqGl/qKXQltJ2HwMrdLcNUdo+N/RQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script>
-    const swiper = new Swiper('.swiper', {
-      // Default parameters
-      slidesPerView: 1,
-      spaceBetween: 0,
-      autoplay: {
-        delay: 2000,
-      },
-      navigation: {
-        nextEl: '.slide-next',
-        prevEl: '.slide-prev',
-      },
-    });
-  </script>
   
 
-  
+        
     
 
 </body>

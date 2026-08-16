@@ -5,7 +5,8 @@ import './styles.css'
 const SITE_ROOT = new URL('site/techsmm.com/', window.location.href).pathname
 
 function sourceForPath(pathname, search = '') {
-  if (pathname === '/' || pathname === '') return 'index.html'
+  const isLoggedIn = !!localStorage.getItem('token')
+  if (pathname === '/' || pathname === '') return isLoggedIn ? 'index.html' : 'landing.html'
   let clean = pathname.replace(/^\/+/, '').replace(/^(?:Techsmm|techsmm\.com)\//i, '')
   clean = clean.replace(/^services\.html\//i, '')
   clean = clean.replace(/\.html\.html$/i, '.html')
@@ -15,9 +16,6 @@ function sourceForPath(pathname, search = '') {
     if (page && /^\d+(?:\.html)?$/.test(page)) return `blog-page-${page.replace(/\.html$/, '')}.html`
   }
   if (clean.endsWith('.html')) return clean
-  // Try flat .html first (e.g. /dashboard → dashboard.html)
-  // Then nested index (e.g. /orders/pending → orders/pending/index.html)
-  // Return the flat version; fetch will 404 and we can fallback
   return `${clean}.html`
 }
 
@@ -26,7 +24,7 @@ function localAsset(url) {
   if (url.startsWith('/site/')) return url
   url = url.replace(/^\/techsmm\.com\/services\.html\//, '/')
   const value = url.replace(/^https?:\/\/[^/]+\//, '').replace(/^\/+/, '').replace(/^\.\//, '').replace(/^(\.\.\/)+/, '')
-  if (value.startsWith('storage.') || value.startsWith('cdn.') || value.startsWith('cdnjs.') || value.startsWith('code.') || value.startsWith('unpkg.')) {
+  if (value.startsWith('storage.') || value.startsWith('cdn.') || value.startsWith('cdnjs.') || value.startsWith('code.') || value.startsWith('unpkg.') || value.startsWith('oss.maxcdn.')) {
     return `/site/${value}`
   }
   return url
@@ -47,6 +45,218 @@ function normalizeRoute(value) {
   return path.replace(/\.html$/i, '') + target.search
 }
 
+// ─── Fetch current user from backend ───────────────────────
+async function fetchCurrentUser() {
+  const token = localStorage.getItem('token')
+  if (!token) return null
+  try {
+    const resp = await fetch('/api/me', { headers: { Authorization: `Bearer ${token}` } })
+    if (!resp.ok) return null
+    const data = await resp.json()
+    return data.user || null
+  } catch { return null }
+}
+
+// ─── Replace hardcoded user data in HTML ───────────────────
+function replaceHardcodedData(doc, user) {
+  if (!user) return
+
+  // 1. Replace username in sidebar h5 elements
+  doc.querySelectorAll('.v2_user_info h5, .sidebar h5, .user_info h5').forEach((el) => {
+    if (el.textContent.trim() === 'elitechwiz') el.textContent = user.username
+  })
+
+  // 2. Replace balance in sidebar balance span only
+  doc.querySelectorAll('.balance, .user_balance .balance').forEach((el) => {
+    const text = el.textContent.trim()
+    if (text.startsWith('$') || text.startsWith('TSH')) {
+      el.textContent = `TSH ${Number(user.balance_tzs || 0).toLocaleString()}`
+    }
+  })
+
+  // 3. Replace email in info cards
+  doc.querySelectorAll('.user_info h4, .text_info h4').forEach((el) => {
+    if (el.textContent.trim() === 'hangoeliah@gmail.com') el.textContent = user.email || ''
+  })
+
+  // 4. Replace user ID in info cards
+  doc.querySelectorAll('.user_info h4, .text_info h4').forEach((el) => {
+    if (el.textContent.trim() === '13792') el.textContent = String(user.id || '')
+  })
+
+  // 5. Replace fav_user_name in any remaining inline scripts
+  doc.querySelectorAll('script').forEach((el) => {
+    el.textContent = el.textContent.replace(/fav_user_name\s*=\s*"[^"]*"/, `fav_user_name = "${user.username}"`)
+  })
+}
+
+// ─── Replace USD prices with TZS in services table ────────
+async function replacePricesWithTZS(doc) {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const resp = await fetch('/api/services', { headers: { Authorization: `Bearer ${token}` } })
+    if (!resp.ok) return
+    const data = await resp.json()
+    if (!data.services) return
+
+    // Build map: service_id → rate_tzs
+    const priceMap = {}
+    for (const s of data.services) {
+      priceMap[s.service] = s.rate_tzs
+    }
+
+    // Replace $X.XX prices in table cells with TSH amounts
+    doc.querySelectorAll('table tr').forEach((row) => {
+      const idEl = row.querySelector('[data-filter-table-service-id], .order_id')
+      if (!idEl) return
+      const serviceId = idEl.textContent.trim() || idEl.getAttribute('data-filter-table-service-id')
+      const tzsRate = priceMap[serviceId]
+      if (!tzsRate) return
+
+      // Find the <td> with dollar amount (rate per 1000)
+      row.querySelectorAll('td').forEach((td) => {
+        const text = td.textContent.trim()
+        if (/^\$[\d.]+$/.test(text)) {
+          td.textContent = `TSH ${tzsRate.toLocaleString()}`
+        }
+      })
+
+      // Fix onclick handlers like showDetails(id,min,max,'$0.14')
+      row.querySelectorAll('[onclick]').forEach((el) => {
+        const onclick = el.getAttribute('onclick')
+        if (onclick && onclick.includes('$')) {
+          el.setAttribute('onclick', onclick.replace(/\$[\d.]+/g, `TSH ${tzsRate.toLocaleString()}`))
+        }
+      })
+    })
+  } catch { }
+}
+
+// ─── Fetch deposits for logged-in user ─────────────────────
+async function populateDeposits(doc) {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const resp = await fetch('/api/deposits', { headers: { Authorization: `Bearer ${token}` } })
+    if (!resp.ok) return
+    const data = await resp.json()
+    if (!data.deposits) return
+
+    const tbody = doc.querySelector('#addfundTable tbody')
+    if (!tbody) return
+
+    // Clear existing table body
+    tbody.innerHTML = ''
+
+    // Add actual deposits
+    data.deposits.forEach((dep) => {
+      const tr = doc.createElement('tr')
+      const dateStr = new Date(dep.created_at).toLocaleString()
+      tr.innerHTML = `
+        <td><span class="tab_id">${dep.id}</span></td>
+        <td><span class="tab_date">${dateStr}</span></td>
+        <td><span class="tab_focus">${dep.method} (${dep.status})</span></td>
+        <td><div class="tab_amount">${Number(dep.amount_tzs).toLocaleString()} TSH</div></td>
+      `
+      tbody.appendChild(tr)
+    })
+  } catch { }
+}
+
+// ─── Fetch orders and populate table ────────────────────────
+async function populateOrders(doc, pathname) {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+
+    // Trigger status update from live API in background
+    await fetch('/api/orders/refresh', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` }
+    }).catch(() => { })
+
+    let statusFilter = ''
+    if (pathname.endsWith('/pending')) statusFilter = 'Pending'
+    else if (pathname.endsWith('/inprogress')) statusFilter = 'In progress'
+    else if (pathname.endsWith('/completed')) statusFilter = 'Completed'
+    else if (pathname.endsWith('/partial')) statusFilter = 'Partial'
+    else if (pathname.endsWith('/processing')) statusFilter = 'Processing'
+    else if (pathname.endsWith('/canceled')) statusFilter = 'Canceled'
+
+    let url = '/api/orders'
+    if (statusFilter) url += '?status=' + encodeURIComponent(statusFilter)
+
+    const resp = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+    if (!resp.ok) return
+    const data = await resp.json()
+    if (!data.orders) return
+
+    const tbody = doc.querySelector('#service-table tbody')
+    if (!tbody) return
+
+    tbody.innerHTML = ''
+
+    if (data.orders.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align: center;">No orders found</td></tr>`
+      return
+    }
+
+    data.orders.forEach((order) => {
+      const tr = doc.createElement('tr')
+      let badgeClass = 'badge bg-warning text-dark'
+      if (order.status === 'Completed') badgeClass = 'badge bg-success'
+      else if (order.status === 'Canceled') badgeClass = 'badge bg-danger'
+      else if (order.status === 'Pending') badgeClass = 'badge bg-secondary'
+      else if (order.status === 'In progress') badgeClass = 'badge bg-info text-dark'
+      else if (order.status === 'Processing') badgeClass = 'badge bg-primary'
+
+      const dateStr = new Date(order.created_at).toLocaleString()
+      tr.innerHTML = `
+        <td><span class="order_id">${order.id}</span></td>
+        <td><span class="tab_date">${dateStr}</span></td>
+        <td><a href="${order.link}" target="_blank" style="word-break: break-all;">${order.link}</a></td>
+        <td><span>TSH ${Number(order.charge_tzs).toLocaleString()}</span></td>
+        <td><span>${order.start_count || '0'}</span></td>
+        <td><span>${order.quantity}</span></td>
+        <td><span>Service #${order.service_id}</span></td>
+        <td><span>${order.remains || '0'}</span></td>
+        <td><span class="${badgeClass}">${order.status}</span></td>
+        <td>-</td>
+      `
+      tbody.appendChild(tr)
+    })
+  } catch { }
+}
+
+// ─── Calculate and replace dashboard stats ──────────────────
+async function populateDashboardStats(doc) {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return
+    const resp = await fetch('/api/orders', { headers: { Authorization: `Bearer ${token}` } })
+    if (!resp.ok) return
+    const data = await resp.json()
+    if (!data.orders) return
+
+    const ordersCount = data.orders.length
+    const totalSpend = data.orders.reduce((sum, order) => sum + (order.charge_tzs || 0), 0)
+
+    doc.querySelectorAll('.user_info, .text_info').forEach((el) => {
+      const titleEl = el.querySelector('h5')
+      const valEl = el.querySelector('h4')
+      if (titleEl && valEl) {
+        const title = titleEl.textContent.trim().toLowerCase()
+        if (title === 'my orders') {
+          valEl.textContent = String(ordersCount)
+        } else if (title === 'spend') {
+          valEl.textContent = `TSH ${totalSpend.toLocaleString()}`
+        }
+      }
+    })
+  } catch { }
+}
+
 function Page() {
   const [html, setHtml] = useState('')
   const [pendingHtml, setPendingHtml] = useState('')
@@ -54,6 +264,7 @@ function Page() {
   const [styles, setStyles] = useState([])
   const [title, setTitle] = useState('TechSMM')
   const [ready, setReady] = useState(false)
+  const [bodyClass, setBodyClass] = useState('dashboard')
   const source = useMemo(() => sourceForPath(window.location.pathname, window.location.search), [window.location.pathname, window.location.search])
 
   useEffect(() => {
@@ -62,48 +273,106 @@ function Page() {
     setHtml('')
     setPendingHtml('')
     setReady(false)
-    
+
     const urls = [`${SITE_ROOT}${source}`]
-    // Fallback: if /foo.html fails, try /foo/index.html (for nested pages like /orders/pending)
     if (!source.endsWith('.html') || source.split('/').length > 1) {
       const dirPath = source.replace(/\.html$/, '')
       urls.push(`${SITE_ROOT}${dirPath}/index.html`)
     }
-    
+
     async function tryFetch() {
       for (const url of urls) {
         try {
           const resp = await fetch(url)
           if (resp.ok) return await resp.text()
-        } catch {}
+        } catch { }
       }
       throw new Error('Page not found')
     }
-    
+
     tryFetch()
-      .then((markup) => {
+      .then(async (markup) => {
         if (cancelled) return
         const closingHtml = markup.search(/<\/html>/i)
         if (closingHtml !== -1) markup = markup.slice(0, closingHtml + 7)
         const document = new DOMParser().parseFromString(markup, 'text/html')
         setTitle(document.title || 'TechSMM')
+        
+        let extractedClass = document.body?.getAttribute('class') || 'dashboard'
+        const isLoggedIn = !!localStorage.getItem('token')
+        if (isLoggedIn) {
+          extractedClass = extractedClass.replace(/\bnoAuth\b/g, '').trim() || 'dashboard'
+          if (!extractedClass.includes('dashboard')) extractedClass += ' dashboard'
+        }
+        if (localStorage.getItem('techSMMCurrentMode') === 'night') {
+          if (!extractedClass.includes('nightmode')) extractedClass += ' nightmode'
+        }
+        setBodyClass(extractedClass)
+        document.body.className = extractedClass
+
         document.querySelectorAll('script').forEach((node) => node.remove())
+
+        // Fix "Sign in" links on signup/index pages — they point to services.html but should go to /
         document.body.querySelectorAll('a[href]').forEach((node) => {
           const original = node.getAttribute('href')
           const label = node.textContent.trim().toLowerCase()
+          const hrefNorm = original.replace(/^\/+(?:techsmm\.com\/)?/i, '/').replace(/\.html$/i, '')
+
+          // "Sign in" on signup or index → go to / (login form is on index)
+          if ((label === 'sign in' || label === 'log in') && (hrefNorm === '/services' || hrefNorm.includes('services'))) {
+            node.setAttribute('href', '/')
+            return
+          }
+
+          // "Sign up" on index → go to /signup
+          if ((label === 'sign up' || label === 'register') && (hrefNorm.includes('signup') || hrefNorm.includes('register'))) {
+            node.setAttribute('href', '/signup')
+            return
+          }
+
           const normalized = label === 'terms & conditions' || label === 'privacy policy'
             ? '/terms'
             : normalizeRoute(original)
           if (normalized !== original) node.setAttribute('href', normalized)
         })
+
         document.body.querySelectorAll('img[src],script[src],source[src],video[src],audio[src],iframe[src]').forEach((node) => {
           const original = node.getAttribute('src')
           const local = localAsset(original)
           if (local !== original) node.setAttribute('src', local)
         })
+
+        // Replace hardcoded user data with actual logged-in user info
+        const user = await fetchCurrentUser()
+        if (user) replaceHardcodedData(document, user)
+
+        // Replace USD prices with TZS (3x markup) in services tables
+        await replacePricesWithTZS(document)
+
+        const pathname = window.location.pathname
+        // Populate deposit history
+        if (pathname.includes('/addfunds')) {
+          await populateDeposits(document)
+        }
+
+        // Populate orders history
+        if (pathname.startsWith('/orders')) {
+          await populateOrders(document, pathname)
+        }
+
+        // Populate dashboard stats
+        if (pathname.includes('/dashboard')) {
+          await populateDashboardStats(document)
+        }
+
         const stylesheetUrls = [...document.querySelectorAll('link[rel="stylesheet"]')]
           .map((link) => localAsset(link.getAttribute('href')))
           .filter(Boolean)
+        // Inject Bootstrap CSS if not already present (needed for grid/layout)
+        const hasBootstrap = stylesheetUrls.some((u) => u.includes('bootstrap.min.css'))
+        if (!hasBootstrap) {
+          stylesheetUrls.unshift('/site/cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css')
+        }
         const inlineStyles = [...document.querySelectorAll('style')].map((style) => style.textContent)
         setStyles([...stylesheetUrls, ...inlineStyles.map((value) => `inline:${value}`)])
         setPendingHtml(document.body?.innerHTML || markup)
@@ -162,11 +431,25 @@ function Page() {
     }
   }, [styles, title, pendingHtml])
 
+  function toggleTheme() {
+    setBodyClass((prev) => {
+      const isNight = prev.includes('nightmode')
+      const next = isNight ? prev.replace(/\s*nightmode/, '').trim() : `${prev} nightmode`
+      if (next.includes('nightmode')) {
+        localStorage.setItem('techSMMCurrentMode', 'night')
+      } else {
+        localStorage.removeItem('techSMMCurrentMode')
+      }
+      document.body.classList.toggle('nightmode', next.includes('nightmode'))
+      return next
+    })
+  }
+
   function navigate(event) {
     const anchor = event.target.closest('a')
     if (!anchor) return
     const href = anchor.getAttribute('href')
-    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || /^https?:\/\//i.test(href)) return
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:') || /^https?:\/\//i.test(href)) return
     event.preventDefault()
     const target = normalizeRoute(href)
     if (!target) return
@@ -174,14 +457,295 @@ function Page() {
     window.dispatchEvent(new PopStateEvent('popstate'))
   }
 
+  // After HTML renders, intercept forms and inject auth bridge
+  useEffect(() => {
+    if (!ready) return
+    const page = document.querySelector('.mirrored-page')
+    if (!page) return
+
+    // Global toggle helpers
+    window.toggleSidebar = function () {
+      const mainContainer = document.getElementById('main_container')
+      if (mainContainer) mainContainer.classList.toggle('toogle_sidebar')
+    }
+
+    window.toggleThemeMode = function () {
+      toggleTheme()
+    }
+
+    function closeAllOffcanvas() {
+      document.querySelectorAll('.offcanvas.show').forEach((oc) => oc.classList.remove('show'))
+    }
+
+    function handlePageClick(e) {
+      if (e.target.closest('.day_night_btn')) {
+        e.preventDefault()
+        e.stopPropagation()
+        toggleTheme()
+        return
+      }
+      if (e.target.closest('.sidebar_menu_icon, .close_btn_phone, .mob_bg_closer_sidebar')) {
+        e.preventDefault()
+        e.stopPropagation()
+        window.toggleSidebar()
+        return
+      }
+      const offcanvasBtn = e.target.closest('[data-bs-toggle="offcanvas"]')
+      if (offcanvasBtn) {
+        e.preventDefault()
+        e.stopPropagation()
+        const target = offcanvasBtn.getAttribute('data-bs-target')
+        const offcanvas = target && document.querySelector(target)
+        if (!offcanvas) return
+        const isOpen = offcanvas.classList.contains('show')
+        closeAllOffcanvas()
+        if (!isOpen) {
+          offcanvas.classList.add('show')
+        }
+        return
+      }
+      if (e.target.closest('.offcanvas .btn-close')) {
+        e.preventDefault()
+        closeAllOffcanvas()
+        return
+      }
+      const menuLink = e.target.closest('.offcanvas .user_menu__item')
+      if (menuLink) {
+        e.preventDefault()
+        e.stopPropagation()
+        const href = menuLink.getAttribute('href')
+        closeAllOffcanvas()
+        if (href === '/logout') {
+          localStorage.removeItem('token')
+          window.history.pushState({}, '', '/')
+          window.dispatchEvent(new PopStateEvent('popstate'))
+        } else if (href) {
+          window.history.pushState({}, '', href)
+          window.dispatchEvent(new PopStateEvent('popstate'))
+        }
+        return
+      }
+    }
+    page.addEventListener('click', handlePageClick, true)
+
+    const showMoreBtn = document.getElementById('showMore')
+    if (showMoreBtn) {
+      showMoreBtn.onclick = function (e) {
+        e.preventDefault()
+        const moreMenu = document.getElementById('more_menu')
+        if (moreMenu) moreMenu.classList.toggle('active_more_menu')
+      }
+    }
+
+    page.querySelectorAll('[data-bs-toggle="pill"]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const target = btn.getAttribute('data-bs-target')
+        if (!target) return
+        const tabContainer = btn.closest('.nav')
+        if (tabContainer) {
+          tabContainer.querySelectorAll('.nav-link').forEach(function (link) {
+            link.classList.remove('active')
+          })
+        }
+        btn.classList.add('active')
+        const tabContent = btn.closest('.tab-content') || document.querySelector(target)?.closest('.tab-content')
+        if (tabContent) {
+          tabContent.querySelectorAll('.tab-pane').forEach(function (pane) {
+            pane.classList.remove('show', 'active')
+          })
+        }
+        const pane = document.querySelector(target)
+        if (pane) pane.classList.add('show', 'active')
+      })
+    })
+
+    page.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault()
+        const target = btn.getAttribute('data-bs-target')
+        if (!target) return
+        const pane = document.querySelector(target)
+        if (!pane) return
+        const isOpen = pane.classList.contains('show')
+        const parent = btn.closest('.accordion') || btn.closest('.accordion flush')
+        if (parent) {
+          parent.querySelectorAll('.accordion-collapse').forEach(function (c) {
+            c.classList.remove('show')
+          })
+          parent.querySelectorAll('.accordion-button').forEach(function (b) {
+            b.classList.add('collapsed')
+            b.setAttribute('aria-expanded', 'false')
+          })
+        }
+        if (!isOpen) {
+          pane.classList.add('show')
+          btn.classList.remove('collapsed')
+          btn.setAttribute('aria-expanded', 'true')
+        }
+      })
+    })
+
+    // Intercept all form submissions — route to backend API
+    function handleFormSubmit(e) {
+      const form = e.target
+      if (!form || form.tagName !== 'FORM') return
+      e.preventDefault()
+      e.stopPropagation()
+
+      const action = (form.getAttribute('action') || '').toLowerCase()
+      const fields = {}
+      new FormData(form).forEach((val, key) => { fields[key] = val })
+      const pathname = window.location.pathname
+
+      // Signup form
+      if (action.includes('signup') || fields['RegistrationForm[login]'] !== undefined) {
+        const username = fields['RegistrationForm[login]'] || ''
+        const email = fields['RegistrationForm[email]'] || ''
+        const password = fields['RegistrationForm[password]'] || ''
+        fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.token) {
+              localStorage.setItem('token', data.token)
+              window.history.pushState({}, '', '/dashboard')
+              window.dispatchEvent(new PopStateEvent('popstate'))
+            } else {
+              alert(data.error || 'Registration failed')
+            }
+          })
+          .catch((err) => alert('Error: ' + err.message))
+        return
+      }
+
+      // Login form
+      if (action.includes('login') || action.includes('services') || fields['LoginForm[username]'] !== undefined) {
+        const email = fields['LoginForm[username]'] || ''
+        const password = fields['LoginForm[password]'] || ''
+        fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.token) {
+              localStorage.setItem('token', data.token)
+              window.history.pushState({}, '', '/dashboard')
+              window.dispatchEvent(new PopStateEvent('popstate'))
+            } else {
+              alert(data.error || 'Login failed')
+            }
+          })
+          .catch((err) => alert('Error: ' + err.message))
+        return
+      }
+
+      // Add Funds form
+      if (fields['AddFoundsForm[amount]'] !== undefined || pathname.includes('addfunds')) {
+        const amount = Number(fields['AddFoundsForm[amount]'])
+        const token = localStorage.getItem('token')
+        if (!token) {
+          alert('Not authenticated')
+          return
+        }
+        fetch('/api/deposit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ amount })
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error)
+            } else {
+              // Auto approve deposit locally
+              fetch(`/api/admin/deposit/${data.deposit_id}/approve`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': 'Bearer ' + token
+                }
+              })
+                .then((r) => r.json())
+                .then((approveData) => {
+                  if (approveData.success) {
+                    alert(`Successfully deposited TSH ${amount.toLocaleString()}!`)
+                    window.location.reload()
+                  } else {
+                    alert('Deposit approval failed: ' + approveData.error)
+                  }
+                })
+            }
+          })
+          .catch((err) => alert('Deposit error: ' + err.message))
+        return
+      }
+
+      // New Order form
+      if (fields['OrderForm[service]'] !== undefined || fields['service_id'] !== undefined || form.getAttribute('id') === 'order-form') {
+        const service_id = fields['OrderForm[service]'] || fields['service_id']
+        const link = fields['OrderForm[link]'] || fields['link']
+        const quantity = Number(fields['OrderForm[quantity]'] || fields['quantity'])
+        const token = localStorage.getItem('token')
+        if (!token) {
+          alert('Not authenticated')
+          return
+        }
+        fetch('/api/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({ service_id, link, quantity })
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error)
+            } else {
+              alert(`Order placed successfully! Order ID: ${data.order_id}`)
+              window.location.reload()
+            }
+          })
+          .catch((err) => alert('Order placement error: ' + err.message))
+        return
+      }
+    }
+
+    page.addEventListener('submit', handleFormSubmit, true)
+    return () => {
+      page.removeEventListener('submit', handleFormSubmit, true)
+      page.removeEventListener('click', handlePageClick, true)
+    }
+  }, [ready, html])
+
   if (error) return <main className="react-error"><h1>TechSMM</h1><p>{error}</p><a href="/">Return home</a></main>
   if (!ready) return <main className="page-loading" aria-label="Loading page"><span>Loading…</span></main>
-  return <div className="mirrored-page" onClick={navigate} dangerouslySetInnerHTML={{ __html: html }} />
+  return <div id="body" className={`mirrored-page ${bodyClass}`} onClick={navigate} dangerouslySetInnerHTML={{ __html: html }} />
+}
+
+// Clean ugly URLs on load — redirect /techsmm.com/services.html/foo to /foo
+function cleanUrl() {
+  const p = window.location.pathname
+  let cleaned = p.replace(/^\/techsmm\.com\/services\.html\//i, '/')
+  cleaned = cleaned.replace(/^\/techsmm\.com\//i, '/')
+  cleaned = cleaned.replace(/\.html$/i, '')
+  if (cleaned !== p) {
+    window.history.replaceState({}, '', cleaned + window.location.search)
+  }
 }
 
 function App() {
   const [, refresh] = useState(0)
   useEffect(() => {
+    cleanUrl()
     const update = () => refresh((value) => value + 1)
     window.addEventListener('popstate', update)
     return () => window.removeEventListener('popstate', update)
