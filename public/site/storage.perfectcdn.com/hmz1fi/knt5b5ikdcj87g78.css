@@ -11,37 +11,37 @@
 
 */
 /* 
-    --color-0: #161b22;
+    --color-0: #000;
     --color-1: #0d1117;
     --color-2: rgba(1,4,9,1);
     --color-3: #ff8d2a;
     --border-1: #30363d;
 */
 :root{
-    --bg-daymode: #F1F2F6;
-    --bg-darkmode: #0d1117;
+    --bg-daymode: #E0E0E0;
+    --bg-darkmode: #000;
     --bg-card-day: #ddd;
-    --bg-card-night: #545454;
-    --bg-sidebar-day:  #3A0F9E;
-    --bg-sidebar-night: #161b22;
-    --bg-menu-active: #3c3b62;
-    --dark-bg-menu-active: #3d3a8e;
-    --bg-filter-btn: #3C15A4;
-    --bg-secondary: #fb981e;
+    --bg-card-night: #1F2937;
+    --bg-sidebar-day:  #0C0D0E;
+    --bg-sidebar-night: #000;
+    --bg-menu-active: #0C0D0E;
+    --dark-bg-menu-active: #0C0D0E;
+    --bg-filter-btn: #000;
+    --bg-secondary: #d5f74c;
     --text-white: #fff;
     --text-black: #000;
-    --text-primary: #fb981e;
-    --dark-text-primary: #56ff83;
+    --text-primary: #d5f74c;
+    --dark-text-primary: #d5f74c;
     --bg-input:#f1f2f6;
-    --dark-bg-input: #0d1117;
+    --dark-bg-input: #000;
     --badges-pending:#FFB400;
     --badges-inprogress:#ff5c00;
     --badges-completed:#01b713;
     --badges-partials:#4a629c;
     --badges-canceled:#dc3545;
     --badges-processing:#ac4006;
-    --home-hero-top-text: #ff004d;
-    --home-btn-hover:#36118b;
+    --home-hero-top-text: #d5f74c;
+    --home-btn-hover:#0C0D0E;
     --border-dark: #4b5766;
 }
 body{
@@ -96,7 +96,7 @@ body.noAuth{
 .order_history .dropdown-menu {
     width: 100%;
     position: relative;
-    background: #fb981e;
+    background: #d5f74c;
     border-color: transparent;
     border-width: 2px;
     border-radius: 10px;
@@ -288,7 +288,7 @@ button.btn.btn-default.btn-big-secondary.clear-datetime {
     position: relative;
     overflow: hidden;
     padding: 1px;
-    background-image: linear-gradient(var(--bg-darkmode), var(--bg-darkmode)), linear-gradient(to bottom, #F89A20, #4EDF79);
+    background-image: linear-gradient(var(--bg-darkmode), var(--bg-darkmode)), linear-gradient(to bottom, #000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
 }
@@ -453,7 +453,7 @@ button.btn.btn-default.btn-big-secondary.clear-datetime {
 }
 
 .dashboard .card.card_v2{
-    background-image: linear-gradient(#fff, #fff), linear-gradient(to bottom, #F89A20, #4EDF79);
+    background-image: linear-gradient(#fff, #fff), linear-gradient(to bottom, #000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
     margin-bottom: 15px;
@@ -866,11 +866,11 @@ button.btn.btn-default.btn-big-secondary.clear-datetime {
     justify-content: space-around;
     font-size: 20px;
     border-radius: 50px;
-    color: #3C15A4;
+    color: #000;
 }
 
 .day_night_btn:hover{
-    color: var(#3C15A4);
+    color: var(#000);
 }
 
 .day_night_btn .active_circle{
@@ -946,7 +946,7 @@ button.btn.btn-default.btn-big-secondary.clear-datetime {
 }
 .order_page .order_link_wrap a.order_link{
     width: 330px;
-    border: 1px solid #fb981e;
+    border: 1px solid #d5f74c;
     font-size: 16px;
     padding: 8px;
     border-radius: 10px;
@@ -1773,7 +1773,7 @@ Global Accoridan
     height: 100%;
     padding: 20px;
     border-radius: 15px;
-    border: 1px solid #fb981e;
+    border: 1px solid #d5f74c;
 }
 
 .nightmode .status_modal .tab-content{
@@ -1790,7 +1790,7 @@ ul.pagination li a{
     display: inline-block;
     width: 40px;
     height: 40px;
-    background: #fb981e1c;
+    background: #d5f74c1c;
     border-radius: 50px;
     text-align: center;
     line-height: 40px;
@@ -2222,7 +2222,7 @@ section.sclSlider {
     text-align: center;
     box-shadow: 0 0 10px #ddd;
     border-radius: 15px;
-    border: 2px solid #fb981e;
+    border: 2px solid #d5f74c;
 }
 
 .noAuth .stat-icon {
@@ -2857,7 +2857,7 @@ footer div.ftrStrip ul li a {
 }
 .nightmode .card.card_v2{
     /* border: 1px solid var(--border-dark); */
-    background-image: linear-gradient(#161b22, #161b22), linear-gradient(to bottom, #F89A20, #4EDF79);
+    background-image: linear-gradient(#000, #000), linear-gradient(to bottom, #000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
 }
@@ -2986,7 +2986,7 @@ footer div.ftrStrip ul li a {
             display: inline-block;
             width:30px;
             height:30px;
-            background: #fb981e1c;
+            background: #d5f74c1c;
             border-radius: 50px;
             text-align: center;
             line-height: 30px;
@@ -3779,14 +3779,14 @@ footer {
     background: #ffffff4d;
     padding: 10px 20px;
     border-radius: 15px;
-    border: 2px solid #fb981e94;
+    border: 2px solid #d5f74c94;
     min-height: 470px;
     max-height: 470px;
     cursor: pointer;
 }
 
 .sig_qna_wrap .num_item {
-    color: #fb981e;
+    color: #d5f74c;
     width: 70px;
     display: flex;
     height: 70px;
@@ -3796,7 +3796,7 @@ footer {
     font-weight: bold;
     border-radius: 50px;
     margin-bottom: 15px;
-    border: 2px solid #fb981e94;
+    border: 2px solid #d5f74c94;
 }
 .sig_qna_wrap .qna_cont h4 {
     font-family: 'Poppins', sans-serif;
@@ -5204,18 +5204,18 @@ p.naHdTx{
     position: absolute;
     top: 10px;
     right: 10px;
-    background: #fb981e59;
+    background: #d5f74c59;
     border: none;
     width: 40px;
     height: 40px;
     border-radius: 50px;
     font-size: 20px;
-    color: #fb981e;
+    color: #d5f74c;
     z-index: 999;
 }
 .btn_icon {
     position: absolute;
-    background: #fb981e;
+    background: #d5f74c;
     width: 30px;
     height: 30px;
     border-radius: 50px;
@@ -5553,7 +5553,7 @@ p.naHdTx{
 .user_top_avatar img {
     border-radius: 50px;
     object-fit: cover;
-    background-image: linear-gradient(#161b22, #161b22), linear-gradient(to bottom, #F89A20, #4EDF79);
+    background-image: linear-gradient(#000, #000), linear-gradient(to bottom, #000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
     padding: 2px;
@@ -5640,7 +5640,7 @@ p.naHdTx{
     padding: 0;
     width: 250px;
     border-radius: 10px;
-    border: 1px solid #fb981e;
+    border: 1px solid #d5f74c;
     padding: 10px;
     background: #ffffff;
     box-shadow: 0 0 10px #000;
@@ -5741,7 +5741,7 @@ a.logout_btn {
 */
 
 :root{
-    --primary-gradient: linear-gradient(267deg, #4EDF79 3.42%, #F89A20 91.65%);
+    --primary-gradient: linear-gradient(135deg, #d5f74c 0%, #b6d83f 100%);
 }
 
 .nav--2.bg-nav-notauth{
@@ -5869,7 +5869,7 @@ a.logout_btn {
     border: double 1px transparent;
     border-radius: 10px;
     background-image: linear-gradient(white, white), 
-                        linear-gradient(to bottom,#F89A20, #4EDF79);
+                        linear-gradient(to bottom,#000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
 }
@@ -5907,7 +5907,7 @@ a.logout_btn {
 
 .signinForm .signin__access__wrap .signin__username .form-control:focus,
 .signinForm .signin__access__wrap .signin__password .form-control:focus{
-    border-color: #4EDF79;
+    border-color: #d5f74c;
 }
 
 .signinForm .signin__access__wrap .singin__button .btn__signin{
@@ -5988,7 +5988,7 @@ a.logout_btn {
 }
 
 #bestsmmpanel{
-    background: linear-gradient(to left, #4EDF79, #F89A20);
+    background: linear-gradient(to left, #d5f74c, #000);
     padding: 150px 0;
     border-radius: 0px 0px 0px 150px;
     overflow: hidden;
@@ -6142,7 +6142,7 @@ a.logout_btn {
     border: double 1px transparent;
     border-radius: 10px;
     background-image: linear-gradient(white, white), 
-                        linear-gradient(to bottom,#F89A20, #4EDF79);
+                        linear-gradient(to bottom,#000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
     margin-bottom: 25px;
@@ -6217,7 +6217,7 @@ a.logout_btn {
 
 #whyChooseUs{
     padding: 50px 0px;
-    background: linear-gradient(120deg, #4edf7aab -1.05%, #f89a20e7 100%),url(fgo8u5bmc64tlxu0.png), linear-gradient(120deg, #4EDF79 -1.05%, #F89A20 100%);
+    background: linear-gradient(120deg, #4edf7aab -1.05%, #f89a20e7 100%),url(fgo8u5bmc64tlxu0.png), linear-gradient(120deg, #d5f74c -1.05%, #000 100%);
     background-repeat: no-repeat;
     background-size: contain;
     background-position: left;
@@ -6819,7 +6819,7 @@ a.logout_btn {
 .user_statistic_wraper .statistic__item{
     padding: 1px;
     border-radius: 10px;
-    background-image: linear-gradient(#fff, #fff), linear-gradient(to bottom, #F89A20, #4EDF79);
+    background-image: linear-gradient(#fff, #fff), linear-gradient(to bottom, #000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
 }
@@ -6856,13 +6856,13 @@ a.logout_btn {
     /* background: var(--bg-sidebar-night);
     border: 1px solid var(--border-dark); */
     border-radius: 10px;
-    background-image: linear-gradient(#161b22, #161b22), linear-gradient(to bottom, #F89A20, #4EDF79);
+    background-image: linear-gradient(#000, #000), linear-gradient(to bottom, #000, #d5f74c);
     background-origin: border-box;
     background-clip: content-box, border-box;
 }
 
 .nightmode .user_statistic_wraper .statistic__item .statistic_inner{
-    background: #161b22;
+    background: #000;
     box-shadow: none;
 }
 .nightmode .statistic__item .user__data h4,
@@ -7088,4 +7088,78 @@ NEW CSS CODES
 
 .dashboard.nightmode .offcanvas{
     background: var(--bg-card-night);
+}
+
+/* TechSMM palette: keep dashboard surfaces readable while using lime as the accent. */
+.dashboard .content_area,
+.dashboard .content_area .content {
+    background: var(--bg-daymode);
+}
+
+.dashboard .card,
+.dashboard .card.card_v2,
+.dashboard #table .table tr,
+.dashboard .details_data .item,
+.dashboard .descriptions_box {
+    background-color: #fff;
+    color: var(--text-black);
+}
+
+.dashboard .form-control,
+.dashboard .form-control:focus {
+    background-color: #fff;
+    color: var(--text-black);
+    border: 1px solid var(--border-dark);
+}
+
+.dashboard .btn-primary,
+.dashboard .btn-primary:hover,
+.dashboard #table .catetitle td,
+.dashboard #table .btn-primary.btn_serv,
+.dashboard .input-group-btn > button,
+.dashboard .sidebar_menu .menu_item.active,
+.dashboard .btn_ser_filter.btn_all,
+.dashboard .filter_btn_wrap .btn_filter:hover,
+.dashboard .filter_btn_wrap .btn_filter.activeItem {
+    background: var(--primary-gradient);
+    color: var(--text-black);
+}
+
+.dashboard #table .btn-primary.btn_serv:hover,
+.dashboard .input-group-btn > button:hover {
+    background: var(--text-primary);
+    color: var(--text-black);
+}
+
+.dashboard .filter_btn_wrap .btn_filter {
+    background: var(--bg-sidebar-night);
+    color: var(--text-white);
+    border-color: var(--border-dark);
+}
+
+.dashboard.nightmode .content_area,
+.dashboard.nightmode .content_area .content,
+.dashboard.nightmode .card,
+.dashboard.nightmode .card.card_v2,
+.dashboard.nightmode #table .table tr,
+.dashboard.nightmode .details_data .item,
+.dashboard.nightmode .descriptions_box {
+    background-color: var(--bg-darkmode);
+    color: var(--text-white);
+}
+
+.dashboard.nightmode .form-control,
+.dashboard.nightmode .form-control:focus {
+    background-color: var(--dark-bg-input);
+    color: var(--text-white);
+    border-color: var(--border-dark);
+}
+
+.dashboard.nightmode #table .btn-primary.btn_serv,
+.dashboard.nightmode .sidebar_menu .menu_item.active,
+.dashboard.nightmode .btn_ser_filter.btn_all,
+.dashboard.nightmode .filter_btn_wrap .btn_filter:hover,
+.dashboard.nightmode .filter_btn_wrap .btn_filter.activeItem {
+    background: var(--primary-gradient);
+    color: var(--text-black);
 }

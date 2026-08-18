@@ -89,6 +89,16 @@ function replaceHardcodedData(doc, user) {
   })
 }
 
+function replaceContactPhone(doc) {
+  if (doc.body) {
+    const currentYear = new Date().getFullYear()
+    doc.body.innerHTML = doc.body.innerHTML
+      .replaceAll('8801728744283', '255688164510')
+      .replaceAll('8801708924551', '255688164510')
+      .replaceAll('copyright 2023', `copyright ${currentYear}`)
+  }
+}
+
 // ─── Replace USD prices with TZS in services table ────────
 async function replacePricesWithTZS(doc) {
   try {
@@ -171,6 +181,7 @@ function Page() {
         if (closingHtml !== -1) markup = markup.slice(0, closingHtml + 7)
         const document = new DOMParser().parseFromString(markup, 'text/html')
         setTitle(document.title || 'TechSMM')
+        replaceContactPhone(document)
         document.querySelectorAll('script').forEach((node) => node.remove())
 
         // Fix "Sign in" links on signup/index pages — they point to services.html but should go to /
@@ -379,6 +390,14 @@ function cleanUrl() {
 function App() {
   const [, refresh] = useState(0)
   useEffect(() => {
+    if (!document.querySelector('script[data-techsmm-iconify]')) {
+      const script = document.createElement('script')
+      script.src = '/site/code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js'
+      script.defer = true
+      script.dataset.techsmmIconify = 'true'
+      document.head.appendChild(script)
+    }
+
     cleanUrl()
     const update = () => refresh((value) => value + 1)
     window.addEventListener('popstate', update)
