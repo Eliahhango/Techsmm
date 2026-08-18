@@ -76,6 +76,28 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (actor_user_id) REFERENCES users(id)
   );
+  CREATE TABLE IF NOT EXISTS tickets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    subject TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT 'Other',
+    status TEXT NOT NULL DEFAULT 'Pending',
+    priority TEXT NOT NULL DEFAULT 'Normal',
+    related_order_id INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
+  CREATE TABLE IF NOT EXISTS ticket_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ticket_id INTEGER NOT NULL,
+    author_user_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    is_admin INTEGER NOT NULL DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE,
+    FOREIGN KEY (author_user_id) REFERENCES users(id)
+  );
 `);
 
 const userColumns = db.prepare('PRAGMA table_info(users)').all().map(column => column.name);
@@ -551,6 +573,7 @@ app.get('/api/admin/overview', adminMiddleware, async (req, res) => {
       FROM deposits
     `).get(start);
     const audit = db.prepare("SELECT COUNT(*) AS total FROM audit_logs WHERE created_at >= datetime('now', ?)").get(start);
+    const tickets = db.prepare("SELECT COUNT(*) AS open_count FROM tickets WHERE status != 'Closed'").get();
     const exchangeRate = db.prepare('SELECT rate FROM exchange_rate WHERE id = 1').get()?.rate || 2500;
     const estimatedProviderCostTzs = Number(orders.provider_cost_usd || 0) * exchangeRate;
 
@@ -579,6 +602,7 @@ app.get('/api/admin/overview', adminMiddleware, async (req, res) => {
         failed_count: Number(orders.failed_count || 0),
       },
       deposits: { pending_count: Number(deposits.pending_count || 0), pending_value_tzs: Number(deposits.pending_value_tzs || 0), approved_value_tzs: Number(deposits.approved_value_tzs || 0) },
+      support: { open_count: Number(tickets.open_count || 0) },
       audit_events: Number(audit.total || 0),
       provider,
     });
@@ -586,6 +610,113 @@ app.get('/api/admin/overview', adminMiddleware, async (req, res) => {
     console.error('Admin overview failed:', error.message);
     res.status(500).json({ error: 'Unable to load admin overview' });
   }
+});
+
+app.post('/api/tickets', authMiddleware, (req, res) => {
+  try {
+    const subject = String(req.body.subject || '').trim();
+    const message = String(req.body.message || '').trim();
+    const category = String(req.body.category || subject || 'Other').trim().slice(0, 80);
+    const relatedOrderId = req.body.related_order_id ? Number(req.body.related_order_id) : null;
+    if (subject.length < 3 || subject.length > 120) return res.status(400).json({ error: 'Subject must be 3-120 characters' });
+    if (message.length < 3 || message.length > 10000) return res.status(400).json({ error: 'Message must be 3-10,000 characters' });
+    if (relatedOrderId !== null && !positiveInteger(relatedOrderId)) return res.status(400).json({ error: 'Invalid related order ID' });
+    const createTicket = db.transaction(() => {
+      const ticket = db.prepare('INSERT INTO tickets (user_id, subject, category, related_order_id) VALUES (?, ?, ?, ?)')
+        .run(req.user.id, subject, category, relatedOrderId);
+      db.prepare('INSERT INTO ticket_messages (ticket_id, author_user_id, message, is_admin) VALUES (?, ?, ?, 0)')
+        .run(ticket.lastInsertRowid, req.user.id, message);
+      return ticket.lastInsertRowid;
+    });
+    const ticketId = createTicket();
+    res.status(201).json({ ticket_id: ticketId, status: 'Pending' });
+  } catch (error) {
+    console.error('Ticket creation failed:', error.message);
+    res.status(500).json({ error: 'Unable to create ticket' });
+  }
+});
+
+app.get('/api/tickets', authMiddleware, (req, res) => {
+  const tickets = db.prepare(`
+    SELECT tickets.*, COUNT(ticket_messages.id) AS message_count
+    FROM tickets
+    LEFT JOIN ticket_messages ON ticket_messages.ticket_id = tickets.id
+    WHERE tickets.user_id = ?
+    GROUP BY tickets.id
+    ORDER BY tickets.updated_at DESC
+  `).all(req.user.id);
+  res.json({ tickets });
+});
+
+app.get('/api/tickets/:id', authMiddleware, (req, res) => {
+  const ticketId = Number(req.params.id);
+  if (!positiveInteger(ticketId)) return res.status(400).json({ error: 'Invalid ticket ID' });
+  const ticket = db.prepare(`
+    SELECT tickets.*, users.username, users.email
+    FROM tickets JOIN users ON users.id = tickets.user_id
+    WHERE tickets.id = ?
+  `).get(ticketId);
+  if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+  const requester = db.prepare('SELECT role FROM users WHERE id = ?').get(req.user.id);
+  if (ticket.user_id !== req.user.id && requester?.role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+  const messages = db.prepare(`
+    SELECT ticket_messages.*, users.username AS author_username
+    FROM ticket_messages JOIN users ON users.id = ticket_messages.author_user_id
+    WHERE ticket_id = ? ORDER BY ticket_messages.created_at ASC
+  `).all(ticketId);
+  res.json({ ticket, messages });
+});
+
+app.post('/api/tickets/:id/messages', authMiddleware, (req, res) => {
+  try {
+    const ticketId = Number(req.params.id);
+    const message = String(req.body.message || '').trim();
+    if (!positiveInteger(ticketId) || message.length < 1 || message.length > 10000) return res.status(400).json({ error: 'A valid message is required' });
+    const ticket = db.prepare('SELECT * FROM tickets WHERE id = ?').get(ticketId);
+    if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+    const requester = db.prepare('SELECT role FROM users WHERE id = ?').get(req.user.id);
+    const isAdmin = requester?.role === 'admin';
+    if (ticket.user_id !== req.user.id && !isAdmin) return res.status(403).json({ error: 'Access denied' });
+    db.transaction(() => {
+      db.prepare('INSERT INTO ticket_messages (ticket_id, author_user_id, message, is_admin) VALUES (?, ?, ?, ?)')
+        .run(ticketId, req.user.id, message, isAdmin ? 1 : 0);
+      db.prepare("UPDATE tickets SET status = ?, updated_at = datetime('now') WHERE id = ?")
+        .run(isAdmin ? 'Answered' : 'Pending', ticketId);
+      db.prepare('INSERT INTO audit_logs (actor_user_id, action, entity_type, entity_id) VALUES (?, ?, ?, ?)')
+        .run(req.user.id, isAdmin ? 'ticket.replied' : 'ticket.updated', 'ticket', String(ticketId));
+    })();
+    res.status(201).json({ success: true, status: isAdmin ? 'Answered' : 'Pending' });
+  } catch (error) {
+    console.error('Ticket message failed:', error.message);
+    res.status(500).json({ error: 'Unable to add ticket message' });
+  }
+});
+
+app.get('/api/admin/tickets', adminMiddleware, (req, res) => {
+  const status = String(req.query.status || '').trim();
+  const params = [];
+  let where = '';
+  if (status) { where = 'WHERE tickets.status = ?'; params.push(status); }
+  const tickets = db.prepare(`
+    SELECT tickets.*, users.username, users.email, COUNT(ticket_messages.id) AS message_count
+    FROM tickets JOIN users ON users.id = tickets.user_id
+    LEFT JOIN ticket_messages ON ticket_messages.ticket_id = tickets.id
+    ${where}
+    GROUP BY tickets.id
+    ORDER BY tickets.updated_at DESC LIMIT 100
+  `).all(...params);
+  res.json({ tickets });
+});
+
+app.patch('/api/admin/tickets/:id/status', adminMiddleware, (req, res) => {
+  const ticketId = Number(req.params.id);
+  const status = String(req.body.status || '').trim();
+  if (!positiveInteger(ticketId) || !['Pending', 'Answered', 'Closed'].includes(status)) return res.status(400).json({ error: 'Invalid ticket status' });
+  const result = db.prepare("UPDATE tickets SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, ticketId);
+  if (result.changes !== 1) return res.status(404).json({ error: 'Ticket not found' });
+  db.prepare('INSERT INTO audit_logs (actor_user_id, action, entity_type, entity_id) VALUES (?, ?, ?, ?)')
+    .run(req.user.id, 'ticket.status_changed', 'ticket', String(ticketId));
+  res.json({ success: true, status });
 });
 
 // Get deposit history

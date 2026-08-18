@@ -590,16 +590,17 @@ async function populateDashboardStats(doc) {
 async function populateAdminPage(doc) {
   const token = localStorage.getItem('token')
   const headers = { Authorization: `Bearer ${token}` }
-  const [overviewResp, usersResp, ordersResp, depositsResp, logsResp] = await Promise.all([
+  const [overviewResp, usersResp, ordersResp, depositsResp, logsResp, ticketsResp] = await Promise.all([
     apiFetch('/api/admin/overview?days=30', { headers }),
     apiFetch('/api/admin/users', { headers }),
     apiFetch('/api/admin/orders', { headers }),
     apiFetch('/api/admin/deposits', { headers }),
     apiFetch('/api/admin/audit-logs', { headers }),
+    apiFetch('/api/admin/tickets', { headers }),
   ])
-  const responses = [overviewResp, usersResp, ordersResp, depositsResp, logsResp]
+  const responses = [overviewResp, usersResp, ordersResp, depositsResp, logsResp, ticketsResp]
   if (responses.some((response) => !response.ok)) throw new Error('Unable to load admin data')
-  const [overview, users, orders, deposits, logs] = await Promise.all(responses.map((response) => response.json()))
+  const [overview, users, orders, deposits, logs, tickets] = await Promise.all(responses.map((response) => response.json()))
   const setAdminStat = (id, value) => {
     const element = doc.querySelector(`#${id}`)
     if (element) element.textContent = String(value)
@@ -610,6 +611,7 @@ async function populateAdminPage(doc) {
   setAdminStat('admin-log-count', overview.audit_events || 0)
   setAdminStat('admin-revenue', `TSH ${Number(overview.orders?.gross_charges_tzs || 0).toLocaleString()}`)
   setAdminStat('admin-provider-balance', overview.provider?.available ? `${overview.provider.balance} ${overview.provider.currency}` : 'Unavailable')
+  setAdminStat('admin-ticket-count', overview.support?.open_count || 0)
 
   const userBody = doc.querySelector('#admin-users tbody')
   if (userBody) {
@@ -638,6 +640,35 @@ async function populateAdminPage(doc) {
       ? logs.logs.map((log) => `<tr><td>${escapeHtml(log.created_at)}</td><td>${escapeHtml(log.actor_username || 'System')}</td><td>${escapeHtml(log.action)}</td><td>${escapeHtml(log.entity_type || '')} ${escapeHtml(log.entity_id || '')}</td></tr>`).join('')
       : '<tr><td colspan="4">No audit logs found</td></tr>'
   }
+
+  const ticketBody = doc.querySelector('#admin-tickets tbody')
+  if (ticketBody) {
+    ticketBody.innerHTML = tickets.tickets?.length
+      ? tickets.tickets.map((ticket) => `<tr><td>#${escapeHtml(ticket.id)}</td><td>${escapeHtml(ticket.username)}</td><td>${escapeHtml(ticket.subject)}</td><td>${escapeHtml(ticket.status)}</td><td><select class="form-control admin-ticket-status" data-admin-ticket-status="${escapeHtml(ticket.id)}"><option ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option><option ${ticket.status === 'Answered' ? 'selected' : ''}>Answered</option><option ${ticket.status === 'Closed' ? 'selected' : ''}>Closed</option></select></td></tr>`).join('')
+      : '<tr><td class="admin-empty" colspan="5">No tickets found</td></tr>'
+  }
+}
+
+async function populateTickets(doc) {
+  const response = await apiFetch('/api/tickets', { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+  if (!response.ok) throw new Error('Unable to load tickets')
+  const data = await response.json()
+  const history = doc.querySelector('#pills-favorite')
+  if (!history) return
+  history.querySelectorAll('.ticket_link, .ticket-empty').forEach((node) => node.remove())
+  if (!data.tickets?.length) {
+    const empty = doc.createElement('p')
+    empty.className = 'ticket-empty text-center'
+    empty.textContent = 'No tickets found.'
+    history.appendChild(empty)
+    return
+  }
+  data.tickets.forEach((ticket) => {
+    const item = doc.createElement('div')
+    item.className = `ticket_link ticket_status_${ticket.status}`
+    item.innerHTML = `<div class="ticket_item"><div class="item_left text-start"><div class="ticket_icon"><i class="fas fa-ticket-alt"></i></div><div><h3>${escapeHtml(ticket.subject)}</h3><p>${escapeHtml(ticket.status)}</p></div></div><div class="item_right text-end"><p>#${escapeHtml(ticket.id)}</p><p>${escapeHtml(ticket.updated_at || ticket.created_at)}</p></div></div>`
+    history.appendChild(item)
+  })
 }
 
 function Page() {
@@ -869,6 +900,7 @@ function Page() {
     if (pathname.startsWith('/orders')) hydrate(populateOrders(document, pathname))
     if (pathname.includes('/dashboard')) hydrate(populateDashboardStats(document))
     if (isAdminPath(pathname)) hydrate(populateAdminPage(document))
+    if (pathname.startsWith('/tickets')) hydrate(populateTickets(document))
 
     // Global toggle helpers
     window.toggleSidebar = function () {
@@ -933,6 +965,20 @@ function Page() {
           .then((response) => response.json())
           .then((data) => data.error ? alert(data.error) : populateAdminPage(document))
           .catch((error) => alert('Approval error: ' + error.message))
+        return
+      }
+      const ticketStatus = e.target.closest('[data-admin-ticket-status]')
+      if (ticketStatus) {
+        e.preventDefault()
+        e.stopPropagation()
+        apiFetch(`/api/admin/tickets/${ticketStatus.dataset.adminTicketStatus}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('token') },
+          body: JSON.stringify({ status: ticketStatus.value }),
+        })
+          .then((response) => response.json())
+          .then((data) => { if (data.error) alert(data.error) })
+          .catch((error) => alert('Ticket update error: ' + error.message))
         return
       }
       const adminLogout = e.target.closest('[data-admin-logout]')
@@ -1190,6 +1236,29 @@ function Page() {
           .then((r) => r.json())
           .then((data) => data.error ? alert(data.error) : alert('Email changed successfully'))
           .catch((err) => alert('Email change error: ' + err.message))
+        return
+      }
+
+      // Create support ticket
+      if (form.getAttribute('id') === 'ticketsend') {
+        const subject = fields['TicketForm[subject]'] || document.querySelector('#subject')?.value || 'Other'
+        const message = document.querySelector('#message')?.value?.trim() || fields['TicketForm[message]'] || ''
+        const orderValue = document.querySelector('#orderid')?.value?.trim() || ''
+        const relatedOrderId = orderValue.split(',')[0].trim()
+        const token = localStorage.getItem('token')
+        apiFetch('/api/tickets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ subject, category: subject, message, related_order_id: relatedOrderId || undefined }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) return alert(data.error)
+            alert(`Ticket #${data.ticket_id} submitted successfully`)
+            form.reset()
+            populateTickets(document).catch(() => {})
+          })
+          .catch((error) => alert('Ticket submission error: ' + error.message))
         return
       }
 
