@@ -120,11 +120,9 @@ function replaceHardcodedData(doc, user) {
   })
 
   // 2. Replace balance in sidebar balance span only
-  doc.querySelectorAll('.balance, .user_balance .balance').forEach((el) => {
-    const text = el.textContent.trim()
-    if (text.startsWith('$') || text.startsWith('TSH')) {
-      el.textContent = `TSH ${Number(user.balance_tzs || 0).toLocaleString()}`
-    }
+  const balanceText = `TSH ${Number(user.balance_tzs || 0).toLocaleString()}`
+  doc.querySelectorAll('.balance, .user_balance .balance, .user_balance span').forEach((el) => {
+    el.textContent = balanceText
   })
 
   // 3. Replace email in info cards
@@ -873,6 +871,11 @@ function Page() {
     const page = document.querySelector('.mirrored-page')
     if (!page) return
 
+    let userHydrationActive = true
+    fetchCurrentUser().then((user) => {
+      if (userHydrationActive && user) replaceHardcodedData(document, user)
+    })
+
     // Global toggle helpers
     window.toggleSidebar = function () {
       const mainContainer = document.getElementById('main_container')
@@ -1224,6 +1227,7 @@ function Page() {
 
     page.addEventListener('submit', handleFormSubmit, true)
     return () => {
+      userHydrationActive = false
       page.removeEventListener('submit', handleFormSubmit, true)
       page.removeEventListener('click', handlePageClick, true)
     }
