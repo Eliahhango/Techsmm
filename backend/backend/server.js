@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
 
 const app = express();
-const PORT = 4000;
+const PORT = Number(process.env.PORT) || 4000;
 const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
 if (!process.env.JWT_SECRET) console.warn('JWT_SECRET is not configured; tokens will reset when the server restarts.');
 const TECHSMM_API = 'https://techsmm.com/api/v2';
