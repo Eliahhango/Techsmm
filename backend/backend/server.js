@@ -93,7 +93,16 @@ if (!userColumns.includes('timezone')) {
 }
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS users_api_key_unique ON users(api_key) WHERE api_key IS NOT NULL');
 if (process.env.ADMIN_BOOTSTRAP_EMAIL) {
-  const promoted = db.prepare("UPDATE users SET role = 'admin' WHERE lower(email) = lower(?)").run(process.env.ADMIN_BOOTSTRAP_EMAIL.trim());
+  const adminEmail = process.env.ADMIN_BOOTSTRAP_EMAIL.trim().toLowerCase();
+  let account = db.prepare('SELECT id FROM users WHERE lower(email) = ?').get(adminEmail);
+  if (!account && process.env.ADMIN_BOOTSTRAP_PASSWORD) {
+    const username = process.env.ADMIN_BOOTSTRAP_USERNAME || 'techsmmadmin';
+    const passwordHash = bcrypt.hashSync(process.env.ADMIN_BOOTSTRAP_PASSWORD, 12);
+    const created = db.prepare('INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, \'admin\')')
+      .run(username, adminEmail, passwordHash);
+    account = { id: created.lastInsertRowid };
+  }
+  const promoted = account ? db.prepare("UPDATE users SET role = 'admin' WHERE id = ?").run(account.id) : { changes: 0 };
   console.log(`Admin bootstrap updated ${promoted.changes} account(s).`);
 }
 
