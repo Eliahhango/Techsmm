@@ -7093,24 +7093,31 @@ NEW CSS CODES
 @media only screen and (max-width: 992px) {
     #v2-banner .banner_image {
         display: block;
-        min-height: 360px;
+        position: relative;
+        min-height: 440px;
         margin-top: 10px;
     }
 
     #v2-banner .banner_image .main-image {
         display: block;
-        position: relative;
+        position: absolute;
         width: min(100%, 420px);
         max-height: 440px;
         object-fit: contain;
+        left: 50%;
         right: auto;
-        bottom: auto;
+        bottom: 0;
+        transform: translateX(-50%);
         margin: 0 auto;
     }
 
     #v2-banner .banner_animations {
         display: block;
-        min-height: 360px;
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
     }
 
     #v2-banner .banner_animations > img {
@@ -7127,16 +7134,16 @@ NEW CSS CODES
 
 @media only screen and (max-width: 550px) {
     #v2-banner .banner_image {
-        min-height: 300px;
+        min-height: 480px;
     }
 
     #v2-banner .banner_image .main-image {
-        width: min(100%, 330px);
-        max-height: 360px;
+        width: min(100%, 380px);
+        max-height: 460px;
     }
 
     #v2-banner .banner_animations {
-        min-height: 300px;
+        height: 100%;
     }
 
     #signinSection {
