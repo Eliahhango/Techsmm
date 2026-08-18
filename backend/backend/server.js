@@ -512,6 +512,16 @@ app.get('/api/admin/deposits', adminMiddleware, (req, res) => {
   res.json({ deposits });
 });
 
+app.get('/api/admin/audit-logs', adminMiddleware, (req, res) => {
+  const logs = db.prepare(`
+    SELECT audit_logs.*, users.username AS actor_username
+    FROM audit_logs
+    LEFT JOIN users ON users.id = audit_logs.actor_user_id
+    ORDER BY audit_logs.created_at DESC LIMIT 100
+  `).all();
+  res.json({ logs });
+});
+
 // Get deposit history
 app.get('/api/deposits', authMiddleware, (req, res) => {
   const deposits = db.prepare('SELECT * FROM deposits WHERE user_id = ? ORDER BY created_at DESC').all(req.user.id);

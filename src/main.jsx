@@ -15,12 +15,18 @@ const PROTECTED_PATHS = [
   '/tickets',
   '/updates',
   '/api-dashboard',
+  '/admin',
 ]
 
 function requiresAuthentication(pathname) {
   const path = (pathname.replace(/\/+$/, '') || '/').replace(/\.html$/i, '')
   if (path === '/index') return true
   return PROTECTED_PATHS.some((protectedPath) => path === protectedPath || path.startsWith(`${protectedPath}/`))
+}
+
+function isAdminPath(pathname) {
+  const path = (pathname.replace(/\/+$/, '') || '/').replace(/\.html$/i, '')
+  return path === '/admin' || path.startsWith('/admin/')
 }
 
 async function apiFetch(input, options = {}) {
@@ -583,6 +589,48 @@ async function populateDashboardStats(doc) {
   } catch { }
 }
 
+async function populateAdminPage(doc) {
+  const token = localStorage.getItem('token')
+  const headers = { Authorization: `Bearer ${token}` }
+  const [usersResp, ordersResp, depositsResp, logsResp] = await Promise.all([
+    apiFetch('/api/admin/users', { headers }),
+    apiFetch('/api/admin/orders', { headers }),
+    apiFetch('/api/admin/deposits', { headers }),
+    apiFetch('/api/admin/audit-logs', { headers }),
+  ])
+  const responses = [usersResp, ordersResp, depositsResp, logsResp]
+  if (responses.some((response) => !response.ok)) throw new Error('Unable to load admin data')
+  const [users, orders, deposits, logs] = await Promise.all(responses.map((response) => response.json()))
+
+  const userBody = doc.querySelector('#admin-users tbody')
+  if (userBody) {
+    userBody.innerHTML = users.users?.length
+      ? users.users.map((user) => `<tr><td>${escapeHtml(user.id)}</td><td>${escapeHtml(user.username)}</td><td>${escapeHtml(user.email)}</td><td>TSH ${Number(user.balance_tzs || 0).toLocaleString()}</td><td>${escapeHtml(user.role)}</td></tr>`).join('')
+      : '<tr><td colspan="5">No users found</td></tr>'
+  }
+
+  const orderBody = doc.querySelector('#admin-orders tbody')
+  if (orderBody) {
+    orderBody.innerHTML = orders.orders?.length
+      ? orders.orders.map((order) => `<tr><td>${escapeHtml(order.id)}</td><td>${escapeHtml(order.username)}</td><td>${escapeHtml(order.service_id)}</td><td>${escapeHtml(order.status)}</td><td>TSH ${Number(order.charge_tzs || 0).toLocaleString()}</td></tr>`).join('')
+      : '<tr><td colspan="5">No orders found</td></tr>'
+  }
+
+  const depositBody = doc.querySelector('#admin-deposits tbody')
+  if (depositBody) {
+    depositBody.innerHTML = deposits.deposits?.length
+      ? deposits.deposits.map((deposit) => `<tr><td>${escapeHtml(deposit.id)}</td><td>${escapeHtml(deposit.username)}</td><td>TSH ${Number(deposit.amount_tzs || 0).toLocaleString()}</td><td>${escapeHtml(deposit.status)}</td><td>${deposit.status === 'Pending' ? `<button type="button" class="btn btn-primary btn-sm" data-admin-approve="${escapeHtml(deposit.id)}">Approve</button>` : '-'}</td></tr>`).join('')
+      : '<tr><td colspan="5">No deposits found</td></tr>'
+  }
+
+  const logBody = doc.querySelector('#admin-logs tbody')
+  if (logBody) {
+    logBody.innerHTML = logs.logs?.length
+      ? logs.logs.map((log) => `<tr><td>${escapeHtml(log.created_at)}</td><td>${escapeHtml(log.actor_username || 'System')}</td><td>${escapeHtml(log.action)}</td><td>${escapeHtml(log.entity_type || '')} ${escapeHtml(log.entity_id || '')}</td></tr>`).join('')
+      : '<tr><td colspan="4">No audit logs found</td></tr>'
+  }
+}
+
 function Page() {
   const [html, setHtml] = useState('')
   const [pendingHtml, setPendingHtml] = useState('')
@@ -683,6 +731,11 @@ function Page() {
           window.dispatchEvent(new PopStateEvent('popstate'))
           return
         }
+        if (isAdminPath(window.location.pathname) && user.role !== 'admin') {
+          window.history.replaceState({}, '', '/dashboard')
+          window.dispatchEvent(new PopStateEvent('popstate'))
+          return
+        }
         if (user) replaceHardcodedData(document, user)
 
         // Replace USD prices with TZS (3x markup) in services tables
@@ -707,6 +760,10 @@ function Page() {
         // Populate dashboard stats
         if (pathname.includes('/dashboard')) {
           await populateDashboardStats(document)
+        }
+
+        if (isAdminPath(pathname)) {
+          await populateAdminPage(document)
         }
 
         const stylesheetUrls = [...document.querySelectorAll('link[rel="stylesheet"]')]
@@ -865,6 +922,20 @@ function Page() {
       if (e.target.closest('.offcanvas .btn-close')) {
         e.preventDefault()
         closeAllOffcanvas()
+        return
+      }
+      const approveButton = e.target.closest('[data-admin-approve]')
+      if (approveButton) {
+        e.preventDefault()
+        e.stopPropagation()
+        approveButton.disabled = true
+        apiFetch(`/api/admin/deposit/${approveButton.dataset.adminApprove}/approve`, {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + localStorage.getItem('token') },
+        })
+          .then((response) => response.json())
+          .then((data) => data.error ? alert(data.error) : populateAdminPage(document))
+          .catch((error) => alert('Approval error: ' + error.message))
         return
       }
       const mobileNavLink = e.target.closest('#navMob a[href]')
