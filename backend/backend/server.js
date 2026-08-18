@@ -18,7 +18,7 @@ if (!TECHSMM_KEY) console.warn('TECHSMM_API_KEY is not configured; provider requ
 const MARKUP_MULTIPLIER = 3; // 3x price markup for profit
 
 // ─── Database ──────────────────────────────────────────────
-const db = new Database(path.join(__dirname, 'panel.db'));
+const db = new Database(process.env.DB_PATH || path.join(__dirname, 'panel.db'));
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
