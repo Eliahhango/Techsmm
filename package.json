@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev.js",
+    "dev:frontend": "vite",
+    "dev:backend": "npm --prefix backend/backend start",
     "build": "vite build",
     "preview": "vite preview"
   },

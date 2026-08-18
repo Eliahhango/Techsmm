@@ -12,6 +12,7 @@ function spaFallback() {
         const pathname = decodeURIComponent(url.pathname)
 
         if (pathname.startsWith('/@') || pathname.startsWith('/src') || pathname.startsWith('/api')) return next()
+        if (pathname === '/index.html' || path.extname(pathname)) return next()
 
         const publicPath = path.join(process.cwd(), 'public', pathname)
         if (fs.existsSync(publicPath) && fs.statSync(publicPath).isFile()) return next()
@@ -30,6 +31,8 @@ export default defineConfig({
   base: './',
   plugins: [react(), spaFallback()],
   server: {
+    port: 5173,
+    strictPort: true,
     proxy: {
       '/api': 'http://localhost:4000',
     },
