@@ -7090,6 +7090,40 @@ NEW CSS CODES
     background: var(--bg-card-night);
 }
 
+@media only screen and (max-width: 992px) {
+    #v2-banner .banner_image {
+        display: block;
+        min-height: 360px;
+        margin-top: 10px;
+    }
+
+    #v2-banner .banner_image .main-image {
+        display: block;
+        position: relative;
+        width: min(100%, 420px);
+        max-height: 440px;
+        object-fit: contain;
+        right: auto;
+        bottom: auto;
+        margin: 0 auto;
+    }
+
+    #v2-banner .banner_animations {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 550px) {
+    #v2-banner .banner_image {
+        min-height: 300px;
+    }
+
+    #v2-banner .banner_image .main-image {
+        width: min(100%, 330px);
+        max-height: 360px;
+    }
+}
+
 /* TechSMM palette: keep dashboard surfaces readable while using lime as the accent. */
 .dashboard .content_area,
 .dashboard .content_area .content {
