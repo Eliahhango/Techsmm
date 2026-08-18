@@ -736,33 +736,7 @@ function Page() {
         }
         if (user) replaceHardcodedData(document, user)
 
-        // Replace USD prices with TZS (3x markup) in services tables
-        await replacePricesWithTZS(document)
-
-        // Setup dynamic order form (search + service dropdown) on new order page
         const pathname = window.location.pathname
-        if (pathname === '/' || pathname === '') {
-          await setupDynamicOrderForm(document)
-        }
-
-        // Populate deposit history
-        if (pathname.includes('/addfunds')) {
-          await populateDeposits(document)
-        }
-
-        // Populate orders history
-        if (pathname.startsWith('/orders')) {
-          await populateOrders(document, pathname)
-        }
-
-        // Populate dashboard stats
-        if (pathname.includes('/dashboard')) {
-          await populateDashboardStats(document)
-        }
-
-        if (isAdminPath(pathname)) {
-          await populateAdminPage(document)
-        }
 
         const stylesheetUrls = [...document.querySelectorAll('link[rel="stylesheet"]')]
           .map((link) => localAsset(link.getAttribute('href')))
@@ -875,6 +849,15 @@ function Page() {
     fetchCurrentUser().then((user) => {
       if (userHydrationActive && user) replaceHardcodedData(document, user)
     })
+
+    const pathname = window.location.pathname
+    const hydrate = (task) => task.catch((error) => console.warn('Background page data load failed:', error.message))
+    hydrate(replacePricesWithTZS(document))
+    if (pathname === '/' || pathname === '') hydrate(setupDynamicOrderForm(document))
+    if (pathname.includes('/addfunds')) hydrate(populateDeposits(document))
+    if (pathname.startsWith('/orders')) hydrate(populateOrders(document, pathname))
+    if (pathname.includes('/dashboard')) hydrate(populateDashboardStats(document))
+    if (isAdminPath(pathname)) hydrate(populateAdminPage(document))
 
     // Global toggle helpers
     window.toggleSidebar = function () {
