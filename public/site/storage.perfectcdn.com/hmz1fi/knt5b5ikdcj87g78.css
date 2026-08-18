@@ -7109,7 +7109,19 @@ NEW CSS CODES
     }
 
     #v2-banner .banner_animations {
-        display: none;
+        display: block;
+        min-height: 360px;
+    }
+
+    #v2-banner .banner_animations > img {
+        width: 58px;
+    }
+
+    #signinSection {
+        top: 0;
+        height: auto;
+        margin: 0 0 32px;
+        padding: 0 16px;
     }
 }
 
@@ -7121,6 +7133,14 @@ NEW CSS CODES
     #v2-banner .banner_image .main-image {
         width: min(100%, 330px);
         max-height: 360px;
+    }
+
+    #v2-banner .banner_animations {
+        min-height: 300px;
+    }
+
+    #signinSection {
+        padding: 0 8px;
     }
 }
 
