@@ -250,20 +250,20 @@ function createCustomSelect(selectEl, items, onChange, renderItem) {
 
   const trigger = selectEl.ownerDocument.createElement('div')
   trigger.className = 'custom-select-trigger'
-  trigger.style.cssText = 'background:#1a1a2e;border:1px solid #333;border-radius:8px;padding:10px 14px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:14px;'
+  trigger.style.cssText = 'background:#f1f2f6;border:0;border-radius:14px;min-height:46px;padding:10px 16px;color:#0c0d0e;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:17px;line-height:1.35;'
 
   const arrow = selectEl.ownerDocument.createElement('span')
   arrow.innerHTML = '<i class="fas fa-chevron-down"></i>'
-  arrow.style.cssText = 'color:#999;font-size:12px;transition:transform 0.2s;'
+  arrow.style.cssText = 'color:#85898e;font-size:12px;transition:transform 0.2s;'
 
   const panel = selectEl.ownerDocument.createElement('div')
   panel.className = 'custom-select-panel'
-  panel.style.cssText = 'display:none;position:absolute;top:100%;left:0;right:0;background:#1a1a2e;border:1px solid #333;border-radius:0 0 8px 8px;max-height:400px;overflow-y:auto;z-index:10000;box-shadow:0 8px 24px rgba(0,0,0,0.4);'
+  panel.style.cssText = 'display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #e1e4e8;border-radius:14px;max-height:400px;overflow-y:auto;z-index:10000;box-shadow:0 12px 28px rgba(12,13,14,0.16);'
 
   const searchInput = selectEl.ownerDocument.createElement('input')
   searchInput.type = 'text'
   searchInput.placeholder = 'Search...'
-  searchInput.style.cssText = 'width:100%;box-sizing:border-box;padding:10px 14px;background:#0f0f1e;border:none;border-bottom:1px solid #333;color:#fff;font-size:13px;outline:none;position:sticky;top:0;z-index:1;'
+  searchInput.style.cssText = 'width:100%;box-sizing:border-box;padding:12px 14px;background:#fff;border:0;border-bottom:1px solid #e1e4e8;color:#0c0d0e;font-size:14px;outline:none;position:sticky;top:0;z-index:1;'
 
   panel.appendChild(searchInput)
 
@@ -277,12 +277,12 @@ function createCustomSelect(selectEl, items, onChange, renderItem) {
     items.filter(item => !lf || item.label.toLowerCase().includes(lf)).forEach(item => {
       const opt = selectEl.ownerDocument.createElement('div')
       opt.className = 'custom-select-option'
-      opt.style.cssText = 'padding:10px 14px;cursor:pointer;color:#ccc;font-size:13px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #222;transition:background 0.15s;'
+      opt.style.cssText = 'padding:12px 14px;cursor:pointer;color:#0c0d0e;font-size:15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #edf0f2;transition:background 0.15s;'
       opt.innerHTML = renderItem ? renderItem(item) : `<span>${item.label}</span>`
       opt.dataset.value = item.value
-      if (item.value === selectedValue) { opt.style.background = '#2a2a3e'; opt.style.color = '#fff' }
-      opt.addEventListener('mouseenter', () => { opt.style.background = '#2a2a3e'; opt.style.color = '#fff' })
-      opt.addEventListener('mouseleave', () => { if (item.value !== selectedValue) { opt.style.background = 'transparent'; opt.style.color = '#ccc' } })
+      if (item.value === selectedValue) { opt.style.background = '#f1f2f6'; opt.style.color = '#0c0d0e' }
+      opt.addEventListener('mouseenter', () => { opt.style.background = '#f1f2f6'; opt.style.color = '#0c0d0e' })
+      opt.addEventListener('mouseleave', () => { if (item.value !== selectedValue) { opt.style.background = 'transparent'; opt.style.color = '#0c0d0e' } })
       opt.addEventListener('click', () => {
         selectedValue = item.value
         selectedLabel = item.label
@@ -374,7 +374,7 @@ async function setupDynamicOrderForm(doc) {
       }, (item) => {
         const s = item.service
         const refill = s.refill ? ' <span style="color:#4ade80;font-weight:600;">REFILL</span>' : ' <span style="color:#f87171;">NO REFILL</span>'
-         return `<span style="background:#f97316;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${escapeHtml(s.service)}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(s.name)}${refill} - $${escapeHtml(s.rate)} per 1000</span>`
+        return `<span style="background:#0c0d0e;color:#fff;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:700;">${escapeHtml(s.service)}</span> <span style="flex:1;min-width:0;white-space:normal;">${escapeHtml(s.name)}${refill} - $${escapeHtml(s.rate)} per 1000</span>`
       })
 
       if (services.length > 0) updateServiceDetails(services[0], doc)
@@ -396,7 +396,7 @@ async function setupDynamicOrderForm(doc) {
       window._catSelectCtrl = createCustomSelect(catSelect, catItems, (val) => {
         populateServices(val)
       }, (item) => {
-        return `<span style="width:20px;text-align:center;">${item.icon}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(item.label)} <sup style="color:#4ade80;font-size:10px;">NEW</sup></span>`
+        return `<span style="width:22px;text-align:center;">${item.icon}</span> <span style="flex:1;min-width:0;white-space:normal;">${escapeHtml(item.label)} <sup style="color:#7da51b;font-size:10px;">NEW</sup></span>`
       })
     }
 
