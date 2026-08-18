@@ -6630,7 +6630,7 @@ a.logout_btn {
         right: 0;
     }
     .banner_animations .fb_bnn {
-        top: 90px;
+        top: -36px;
         left: -84px;
         width: 60px;
     }
@@ -6646,7 +6646,7 @@ a.logout_btn {
     }
     .banner_animations .yt_bnn {
         left: 53px;
-        top: 90px;
+        top: -44px;
         width: 60px;
     }
     .banner_animations .tik_bnn {
@@ -7090,66 +7090,6 @@ NEW CSS CODES
     background: var(--bg-card-night);
 }
 
-@media only screen and (max-width: 992px) {
-    #v2-banner .banner_image {
-        display: block;
-        position: relative;
-        min-height: 440px;
-        margin-top: 10px;
-    }
-
-    #v2-banner .banner_image .main-image {
-        display: block;
-        position: absolute;
-        width: min(100%, 420px);
-        max-height: 440px;
-        object-fit: contain;
-        left: 50%;
-        right: auto;
-        bottom: 0;
-        transform: translateX(-50%);
-        margin: 0 auto;
-    }
-
-    #v2-banner .banner_animations {
-        display: block;
-        position: absolute;
-        inset: 0;
-        height: 100%;
-        z-index: 2;
-        pointer-events: none;
-    }
-
-    #v2-banner .banner_animations > img {
-        width: 58px;
-    }
-
-    #signinSection {
-        top: 0;
-        height: auto;
-        margin: 0 0 32px;
-        padding: 0 16px;
-    }
-}
-
-@media only screen and (max-width: 550px) {
-    #v2-banner .banner_image {
-        min-height: 480px;
-    }
-
-    #v2-banner .banner_image .main-image {
-        width: min(100%, 380px);
-        max-height: 460px;
-    }
-
-    #v2-banner .banner_animations {
-        height: 100%;
-    }
-
-    #signinSection {
-        padding: 0 8px;
-    }
-}
 
 /* TechSMM palette: keep dashboard surfaces readable while using lime as the accent. */
 .dashboard .content_area,

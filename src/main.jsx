@@ -1126,7 +1126,7 @@ function Page() {
   }, [ready, html])
 
   if (error && !html) return <main className="react-error"><h1>TechSMM</h1><p>{error}</p><a href="/">Return home</a></main>
-  if (!html) return <main className="page-loading" aria-label="Loading page"><span>Loading…</span></main>
+  if (!html) return <main className="page-loading" aria-label="Loading page" />
   return <div id="body" aria-busy={!ready} className={`mirrored-page ${bodyClass}`} onClick={navigate} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
