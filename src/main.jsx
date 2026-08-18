@@ -599,6 +599,14 @@ async function populateAdminPage(doc) {
   const responses = [usersResp, ordersResp, depositsResp, logsResp]
   if (responses.some((response) => !response.ok)) throw new Error('Unable to load admin data')
   const [users, orders, deposits, logs] = await Promise.all(responses.map((response) => response.json()))
+  const setAdminStat = (id, value) => {
+    const element = doc.querySelector(`#${id}`)
+    if (element) element.textContent = String(value)
+  }
+  setAdminStat('admin-user-count', users.users?.length || 0)
+  setAdminStat('admin-order-count', orders.orders?.length || 0)
+  setAdminStat('admin-pending-count', deposits.deposits?.filter((deposit) => deposit.status === 'Pending').length || 0)
+  setAdminStat('admin-log-count', logs.logs?.length || 0)
 
   const userBody = doc.querySelector('#admin-users tbody')
   if (userBody) {

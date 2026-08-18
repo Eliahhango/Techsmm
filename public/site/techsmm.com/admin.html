@@ -6,48 +6,88 @@
   <title>Admin Dashboard | TechSMM</title>
   <link rel="stylesheet" href="/storage.perfectcdn.com/hmz1fi/xn3xyxzgfy8kn8r3.css">
   <link rel="stylesheet" href="/storage.perfectcdn.com/hmz1fi/knt5b5ikdcj87g78.css">
+  <link rel="stylesheet" href="/storage.perfectcdn.com/css/font-awesome/css/all.min.css">
   <style>
-    .admin-page { padding: 30px 0 60px; }
-    .admin-page .table-responsive { overflow-x: auto; }
-    .admin-page table { min-width: 620px; }
-    .admin-page h1 { margin-bottom: 25px; }
-    .admin-page h2 { font-size: 22px; margin: 0 0 15px; }
-    .admin-page .card { margin-bottom: 24px; }
+    .admin-shell { min-height: 100vh; background: #e0e0e0; }
+    .admin-sidebar { position: fixed; inset: 0 auto 0 0; width: 280px; padding: 22px 18px; background: #000; color: #fff; z-index: 10; }
+    .admin-brand { display: block; padding: 0 16px 25px; border-bottom: 1px solid #27303a; }
+    .admin-brand img { width: 190px; max-width: 100%; }
+    .admin-profile { margin: 24px 0; padding: 18px; border: 1px solid #26313b; border-radius: 16px; background: #0c0d0e; }
+    .admin-profile .avatar { width: 56px; height: 56px; display: grid; place-items: center; margin-bottom: 12px; border-radius: 50%; background: linear-gradient(135deg, #d5f74c, #b6d83f); color: #000; font-size: 24px; }
+    .admin-profile h5 { margin: 0 0 5px; color: #fff; font-size: 17px; }
+    .admin-profile small { color: #999; }
+    .admin-profile .role { display: inline-block; margin-top: 12px; padding: 4px 9px; border-radius: 999px; background: #d5f74c; color: #000; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .admin-nav { display: grid; gap: 6px; }
+    .admin-nav a { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; color: #cbd5df; text-decoration: none; font-weight: 600; }
+    .admin-nav a:hover, .admin-nav a.active { background: #d5f74c; color: #000; }
+    .admin-nav i { width: 18px; text-align: center; }
+    .admin-main { min-height: 100vh; margin-left: 280px; padding: 30px 38px 60px; }
+    .admin-topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+    .admin-topbar h1 { margin: 0; color: #0c0d0e; font-size: 32px; font-weight: 800; }
+    .admin-topbar p { margin: 5px 0 0; color: #68717b; }
+    .admin-topbar .admin-mark { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: #000; color: #d5f74c; font-size: 20px; }
+    .admin-stat-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 25px; }
+    .admin-stat { padding: 20px; border: 1px solid #d4d8dc; border-radius: 16px; background: #fff; box-shadow: 0 8px 20px rgba(12, 13, 14, .06); }
+    .admin-stat .label { color: #68717b; font-size: 13px; font-weight: 600; }
+    .admin-stat .value { margin-top: 8px; color: #0c0d0e; font-size: 30px; font-weight: 800; }
+    .admin-stat .icon { float: right; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: #d5f74c; color: #000; }
+    .admin-card { margin-bottom: 22px; overflow: hidden; border: 1px solid #d4d8dc; border-radius: 16px; background: #fff; box-shadow: 0 8px 20px rgba(12, 13, 14, .06); }
+    .admin-card-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid #e6e8eb; }
+    .admin-card-head h2 { margin: 0; color: #0c0d0e; font-size: 19px; font-weight: 800; }
+    .admin-card-head span { color: #68717b; font-size: 12px; }
+    .admin-table-wrap { overflow-x: auto; }
+    .admin-table { width: 100%; min-width: 650px; margin: 0; border-collapse: collapse; }
+    .admin-table th { padding: 13px 20px; background: #f7f8f8; color: #68717b; font-size: 11px; text-align: left; text-transform: uppercase; letter-spacing: .04em; }
+    .admin-table td { padding: 15px 20px; border-top: 1px solid #edf0f2; color: #1f2937; font-size: 13px; }
+    .admin-table tr:hover td { background: #fbfdf5; }
+    .admin-table .btn { border: 0; border-radius: 999px; background: #d5f74c; color: #000; font-size: 12px; font-weight: 700; }
+    .admin-empty { padding: 28px !important; color: #68717b !important; text-align: center; }
+    @media (max-width: 1100px) { .admin-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 768px) {
+      .admin-sidebar { position: relative; width: 100%; min-height: auto; padding: 14px 16px; }
+      .admin-brand { display: flex; align-items: center; justify-content: space-between; padding: 0 0 14px; }
+      .admin-profile { margin: 14px 0; }
+      .admin-nav { display: flex; overflow-x: auto; gap: 5px; padding-bottom: 2px; }
+      .admin-nav a { flex: 0 0 auto; padding: 10px 12px; font-size: 13px; }
+      .admin-nav a span { display: none; }
+      .admin-main { margin-left: 0; padding: 24px 16px 45px; }
+      .admin-topbar h1 { font-size: 27px; }
+    }
+    @media (max-width: 480px) { .admin-stat-grid { grid-template-columns: 1fr 1fr; gap: 10px; } .admin-stat { padding: 14px; } .admin-stat .value { font-size: 23px; } }
   </style>
 </head>
 <body class="dashboard">
-  <main id="main_container">
-    <div class="content_area" style="padding-left:0;">
-      <div class="content">
-        <div class="container-fluid admin-page">
-          <h1>Admin Dashboard</h1>
-          <section class="card card_v2">
-            <div class="card-body">
-              <h2>Users</h2>
-              <div class="table-responsive"><table id="admin-users" class="table"><thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Balance</th><th>Role</th></tr></thead><tbody><tr><td colspan="5">Loading...</td></tr></tbody></table></div>
-            </div>
-          </section>
-          <section class="card card_v2">
-            <div class="card-body">
-              <h2>Orders</h2>
-              <div class="table-responsive"><table id="admin-orders" class="table"><thead><tr><th>ID</th><th>User</th><th>Service</th><th>Status</th><th>Charge</th></tr></thead><tbody><tr><td colspan="5">Loading...</td></tr></tbody></table></div>
-            </div>
-          </section>
-          <section class="card card_v2">
-            <div class="card-body">
-              <h2>Deposits</h2>
-              <div class="table-responsive"><table id="admin-deposits" class="table"><thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="5">Loading...</td></tr></tbody></table></div>
-            </div>
-          </section>
-          <section class="card card_v2">
-            <div class="card-body">
-              <h2>Audit Logs</h2>
-              <div class="table-responsive"><table id="admin-logs" class="table"><thead><tr><th>Date</th><th>Actor</th><th>Action</th><th>Entity</th></tr></thead><tbody><tr><td colspan="4">Loading...</td></tr></tbody></table></div>
-            </div>
-          </section>
-        </div>
+  <main id="main_container" class="admin-shell">
+    <aside class="admin-sidebar">
+      <a class="admin-brand" href="/admin"><img src="/storage.perfectcdn.com/hmz1fi/hjzk7i0ydcb6cf5i.png" alt="TechSMM Admin"></a>
+      <div class="admin-profile">
+        <div class="avatar"><i class="fas fa-shield-alt"></i></div>
+        <div class="v2_user_info"><h5>Admin</h5></div>
+        <small>Operations and platform control</small>
+        <div class="role">Administrator</div>
       </div>
-    </div>
+      <nav class="admin-nav">
+        <a class="active" href="/admin"><i class="fas fa-chart-line"></i><span>Overview</span></a>
+        <a href="/dashboard"><i class="fas fa-home"></i><span>User Dashboard</span></a>
+        <a href="/services"><i class="fas fa-layer-group"></i><span>Services</span></a>
+        <a href="/orders"><i class="fas fa-shopping-cart"></i><span>Orders</span></a>
+        <a href="/account"><i class="fas fa-user-cog"></i><span>Account</span></a>
+        <a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Log out</span></a>
+      </nav>
+    </aside>
+    <section class="admin-main">
+      <header class="admin-topbar"><div><h1>Admin overview</h1><p>Monitor users, orders, deposits, and platform activity.</p></div><div class="admin-mark"><i class="fas fa-cog"></i></div></header>
+      <div class="admin-stat-grid">
+        <div class="admin-stat"><div class="icon"><i class="fas fa-users"></i></div><div class="label">Total users</div><div id="admin-user-count" class="value">-</div></div>
+        <div class="admin-stat"><div class="icon"><i class="fas fa-shopping-bag"></i></div><div class="label">Total orders</div><div id="admin-order-count" class="value">-</div></div>
+        <div class="admin-stat"><div class="icon"><i class="fas fa-wallet"></i></div><div class="label">Pending deposits</div><div id="admin-pending-count" class="value">-</div></div>
+        <div class="admin-stat"><div class="icon"><i class="fas fa-clipboard-check"></i></div><div class="label">Audit events</div><div id="admin-log-count" class="value">-</div></div>
+      </div>
+      <section class="admin-card"><div class="admin-card-head"><h2>Users</h2><span>Latest accounts</span></div><div class="admin-table-wrap"><table id="admin-users" class="admin-table"><thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Balance</th><th>Role</th></tr></thead><tbody><tr><td class="admin-empty" colspan="5">Loading...</td></tr></tbody></table></div></section>
+      <section class="admin-card"><div class="admin-card-head"><h2>Orders</h2><span>Latest activity</span></div><div class="admin-table-wrap"><table id="admin-orders" class="admin-table"><thead><tr><th>ID</th><th>User</th><th>Service</th><th>Status</th><th>Charge</th></tr></thead><tbody><tr><td class="admin-empty" colspan="5">Loading...</td></tr></tbody></table></div></section>
+      <section class="admin-card"><div class="admin-card-head"><h2>Deposits</h2><span>Review pending funding</span></div><div class="admin-table-wrap"><table id="admin-deposits" class="admin-table"><thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td class="admin-empty" colspan="5">Loading...</td></tr></tbody></table></div></section>
+      <section class="admin-card"><div class="admin-card-head"><h2>Audit logs</h2><span>Recent administrative events</span></div><div class="admin-table-wrap"><table id="admin-logs" class="admin-table"><thead><tr><th>Date</th><th>Actor</th><th>Action</th><th>Entity</th></tr></thead><tbody><tr><td class="admin-empty" colspan="4">Loading...</td></tr></tbody></table></div></section>
+    </section>
   </main>
 </body>
 </html>
