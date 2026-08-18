@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles.css'
 
@@ -587,6 +587,7 @@ function Page() {
   const [title, setTitle] = useState('TechSMM')
   const [ready, setReady] = useState(false)
   const [bodyClass, setBodyClass] = useState('dashboard')
+  const activeStyleNodes = useRef([])
   const source = useMemo(() => sourceForPath(window.location.pathname, window.location.search), [window.location.pathname, window.location.search])
 
   useEffect(() => {
@@ -758,17 +759,26 @@ function Page() {
       image.src = url
     }))
     let active = true
+    let committed = false
     Promise.all([...waitForStyles, ...waitForImages]).then(() => {
       if (active) {
+        const previous = activeStyleNodes.current
         setHtml(pendingHtml)
         setReady(true)
+        activeStyleNodes.current = added
+        committed = true
+        previous.forEach((node) => node.remove())
       }
     })
     return () => {
       active = false
-      added.forEach((node) => node.remove())
+      if (!committed) added.forEach((node) => node.remove())
     }
   }, [styles, title, pendingHtml])
+
+  useEffect(() => () => {
+    activeStyleNodes.current.forEach((node) => node.remove())
+  }, [])
 
   function toggleTheme() {
     setBodyClass((prev) => {
