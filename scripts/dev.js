@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process'
 
 const processes = [
-  spawn(process.execPath, ['backend/backend/server.js'], { stdio: 'inherit' }),
+  spawn(process.execPath, ['--env-file-if-exists=backend/backend/.env', 'backend/backend/server.js'], { stdio: 'inherit' }),
   spawn(process.execPath, ['node_modules/vite/bin/vite.js'], { stdio: 'inherit' }),
 ]
 

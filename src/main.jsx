@@ -4,6 +4,52 @@ import './styles.css'
 
 const SITE_ROOT = new URL('site/techsmm.com/', window.location.href).pathname
 
+const PROTECTED_PATHS = [
+  '/services',
+  '/dashboard',
+  '/account',
+  '/addfunds',
+  '/child-panel',
+  '/massorder',
+  '/orders',
+  '/tickets',
+  '/updates',
+  '/api-dashboard',
+]
+
+function requiresAuthentication(pathname) {
+  const path = (pathname.replace(/\/+$/, '') || '/').replace(/\.html$/i, '')
+  if (path === '/index') return true
+  return PROTECTED_PATHS.some((protectedPath) => path === protectedPath || path.startsWith(`${protectedPath}/`))
+}
+
+async function apiFetch(input, options = {}) {
+  const response = await fetch(input, options)
+  if (response.status === 401) {
+    localStorage.removeItem('token')
+    if (window.location.pathname !== '/') {
+      window.history.replaceState({}, '', '/')
+      window.dispatchEvent(new PopStateEvent('popstate'))
+    }
+  }
+  return response
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+  }[character]))
+}
+
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(String(value || ''))
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '#'
+  } catch {
+    return '#'
+  }
+}
+
 function sourceForPath(pathname, search = '') {
   const isLoggedIn = !!localStorage.getItem('token')
   if (pathname === '/' || pathname === '') return isLoggedIn ? 'index.html' : 'landing.html'
@@ -51,7 +97,7 @@ async function fetchCurrentUser() {
   const token = localStorage.getItem('token')
   if (!token) return null
   try {
-    const resp = await fetch('/api/me', { headers: { Authorization: `Bearer ${token}` } })
+    const resp = await apiFetch('/api/me', { headers: { Authorization: `Bearer ${token}` } })
     if (!resp.ok) return null
     const data = await resp.json()
     return data.user || null
@@ -85,9 +131,35 @@ function replaceHardcodedData(doc, user) {
     if (el.textContent.trim() === '13792') el.textContent = String(user.id || '')
   })
 
+  const accountFields = doc.querySelectorAll('#accountpage input[readonly]')
+  if (accountFields[0]) accountFields[0].value = user.username
+  if (accountFields[1]) accountFields[1].value = user.email || ''
+  const currentEmail = doc.querySelector('#current-email')
+  if (currentEmail) currentEmail.textContent = user.email || ''
+
   // 5. Replace fav_user_name in any remaining inline scripts
   doc.querySelectorAll('script').forEach((el) => {
     el.textContent = el.textContent.replace(/fav_user_name\s*=\s*"[^"]*"/, `fav_user_name = "${user.username}"`)
+  })
+
+  const replacements = [
+    ['elitechwiz', user.username],
+    ['hangoeliah@gmail.com', user.email || ''],
+    ['13792', String(user.id || '')],
+  ]
+  const walker = doc.createTreeWalker(doc.body, 4)
+  const textNodes = []
+  while (walker.nextNode()) textNodes.push(walker.currentNode)
+  textNodes.forEach((node) => {
+    replacements.forEach(([from, to]) => {
+      if (node.nodeValue.includes(from)) node.nodeValue = node.nodeValue.replaceAll(from, to)
+    })
+  })
+  doc.querySelectorAll('input[value], textarea').forEach((field) => {
+    replacements.forEach(([from, to]) => {
+      if (field.value === from) field.value = to
+      if (field.getAttribute('value') === from) field.setAttribute('value', to)
+    })
   })
 }
 
@@ -106,7 +178,7 @@ async function replacePricesWithTZS(doc) {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-    const resp = await fetch('/api/services', { headers: { Authorization: `Bearer ${token}` } })
+    const resp = await apiFetch('/api/services', { headers: { Authorization: `Bearer ${token}` } })
     if (!resp.ok) return
     const data = await resp.json()
     if (!data.services) return
@@ -206,6 +278,7 @@ function createCustomSelect(selectEl, items, onChange, renderItem) {
       opt.addEventListener('click', () => {
         selectedValue = item.value
         selectedLabel = item.label
+        selectEl.value = selectedValue
         trigger.querySelector('.trigger-label').innerHTML = renderItem ? renderItem(item) : `<span>${item.label}</span>`
         panel.style.display = 'none'
         arrow.querySelector('i').style.transform = 'rotate(0deg)'
@@ -250,14 +323,14 @@ function createCustomSelect(selectEl, items, onChange, renderItem) {
   selectEl.parentNode.insertBefore(wrapper, selectEl.nextSibling)
 
   renderItems()
-  return { setSelected: (val) => { selectedValue = val; const item = items.find(i => i.value === val); if (item) { selectedLabel = item.label; trigger.querySelector('.trigger-label').innerHTML = renderItem ? renderItem(item) : `<span>${item.label}</span>`; if (onChange) onChange(val) } }, getValue: () => selectedValue }
+  return { setSelected: (val) => { selectedValue = val; selectEl.value = val; const item = items.find(i => i.value === val); if (item) { selectedLabel = item.label; trigger.querySelector('.trigger-label').innerHTML = renderItem ? renderItem(item) : `<span>${item.label}</span>`; if (onChange) onChange(val) } }, getValue: () => selectedValue }
 }
 
 async function setupDynamicOrderForm(doc) {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-    const resp = await fetch('/api/services', { headers: { Authorization: `Bearer ${token}` } })
+    const resp = await apiFetch('/api/services', { headers: { Authorization: `Bearer ${token}` } })
     if (!resp.ok) return
     const data = await resp.json()
     if (!data.categories) return
@@ -293,7 +366,7 @@ async function setupDynamicOrderForm(doc) {
       }, (item) => {
         const s = item.service
         const refill = s.refill ? ' <span style="color:#4ade80;font-weight:600;">REFILL</span>' : ' <span style="color:#f87171;">NO REFILL</span>'
-        return `<span style="background:#f97316;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${s.service}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.name}${refill} - $${s.rate} per 1000</span>`
+         return `<span style="background:#f97316;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${escapeHtml(s.service)}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(s.name)}${refill} - $${escapeHtml(s.rate)} per 1000</span>`
       })
 
       if (services.length > 0) updateServiceDetails(services[0], doc)
@@ -315,34 +388,11 @@ async function setupDynamicOrderForm(doc) {
       window._catSelectCtrl = createCustomSelect(catSelect, catItems, (val) => {
         populateServices(val)
       }, (item) => {
-        return `<span style="width:20px;text-align:center;">${item.icon}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.label} <sup style="color:#4ade80;font-size:10px;">NEW</sup></span>`
+        return `<span style="width:20px;text-align:center;">${item.icon}</span> <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(item.label)} <sup style="color:#4ade80;font-size:10px;">NEW</sup></span>`
       })
     }
 
     if (catNames.length > 0) populateServices(catNames[0])
-
-    // Handle order form submission
-    const orderForm = doc.querySelector('#order-form')
-    if (orderForm) {
-      orderForm.addEventListener('submit', async (e) => {
-        e.preventDefault()
-        const serviceId = window._svcSelectCtrl?.getValue()
-        const link = doc.querySelector('#orderform-link')?.value?.trim()
-        const quantity = doc.querySelector('#orderform-quantity')?.value
-        if (!serviceId || !link || !quantity) { alert('Please fill in all fields'); return }
-        try {
-          const resp = await fetch('/api/order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ service_id: Number(serviceId), link, quantity: Number(quantity) })
-          })
-          const data = await resp.json()
-          if (data.error) { alert(data.error); return }
-          alert('Order placed successfully! Order ID: ' + (data.order_id || data.techsmm_order_id || ''))
-          window.location.reload()
-        } catch (err) { alert('Order failed: ' + err.message) }
-      })
-    }
 
     // Setup search box
     const searchInput = doc.querySelector('#template-input') || doc.querySelector('#new-order-search input')
@@ -364,7 +414,7 @@ async function setupDynamicOrderForm(doc) {
         if (q.length < 2) { resultsDiv.style.display = 'none'; return }
         debounceTimer = setTimeout(async () => {
           try {
-            const sr = await fetch(`/api/services/search?q=${encodeURIComponent(q)}`, { headers: { Authorization: `Bearer ${token}` } })
+            const sr = await apiFetch(`/api/services/search?q=${encodeURIComponent(q)}`, { headers: { Authorization: `Bearer ${token}` } })
             if (!sr.ok) return
             const sd = await sr.json()
             if (!sd.services || sd.services.length === 0) { resultsDiv.style.display = 'none'; return }
@@ -373,7 +423,7 @@ async function setupDynamicOrderForm(doc) {
               const item = doc.createElement('div')
               item.className = 'search-result-item'
               item.style.cssText = 'padding:10px 14px;cursor:pointer;border-bottom:1px solid #333;display:flex;align-items:center;gap:10px;color:#fff;font-size:13px;'
-              item.innerHTML = `<span style="background:#f97316;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${s.service}</span> <span>${s.name} - $${s.rate} per 1000</span>`
+              item.innerHTML = `<span style="background:#f97316;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">${escapeHtml(s.service)}</span> <span>${escapeHtml(s.name)} - $${escapeHtml(s.rate)} per 1000</span>`
               item.addEventListener('mouseenter', () => item.style.background = '#2a2a3e')
               item.addEventListener('mouseleave', () => item.style.background = 'transparent')
               item.addEventListener('click', () => {
@@ -410,7 +460,7 @@ async function populateDeposits(doc) {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-    const resp = await fetch('/api/deposits', { headers: { Authorization: `Bearer ${token}` } })
+    const resp = await apiFetch('/api/deposits', { headers: { Authorization: `Bearer ${token}` } })
     if (!resp.ok) return
     const data = await resp.json()
     if (!data.deposits) return
@@ -443,7 +493,7 @@ async function populateOrders(doc, pathname) {
     if (!token) return
 
     // Trigger status update from live API in background
-    await fetch('/api/orders/refresh', {
+    await apiFetch('/api/orders/refresh', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` }
     }).catch(() => { })
@@ -459,7 +509,7 @@ async function populateOrders(doc, pathname) {
     let url = '/api/orders'
     if (statusFilter) url += '?status=' + encodeURIComponent(statusFilter)
 
-    const resp = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+    const resp = await apiFetch(url, { headers: { Authorization: `Bearer ${token}` } })
     if (!resp.ok) return
     const data = await resp.json()
     if (!data.orders) return
@@ -485,15 +535,15 @@ async function populateOrders(doc, pathname) {
 
       const dateStr = new Date(order.created_at).toLocaleString()
       tr.innerHTML = `
-        <td><span class="order_id">${order.id}</span></td>
-        <td><span class="tab_date">${dateStr}</span></td>
-        <td><a href="${order.link}" target="_blank" style="word-break: break-all;">${order.link}</a></td>
+        <td><span class="order_id">${escapeHtml(order.id)}</span></td>
+        <td><span class="tab_date">${escapeHtml(dateStr)}</span></td>
+        <td><a href="${escapeHtml(safeExternalUrl(order.link))}" target="_blank" rel="noopener noreferrer" style="word-break: break-all;">${escapeHtml(order.link)}</a></td>
         <td><span>TSH ${Number(order.charge_tzs).toLocaleString()}</span></td>
-        <td><span>${order.start_count || '0'}</span></td>
-        <td><span>${order.quantity}</span></td>
-        <td><span>Service #${order.service_id}</span></td>
-        <td><span>${order.remains || '0'}</span></td>
-        <td><span class="${badgeClass}">${order.status}</span></td>
+        <td><span>${escapeHtml(order.start_count || '0')}</span></td>
+        <td><span>${escapeHtml(order.quantity)}</span></td>
+        <td><span>Service #${escapeHtml(order.service_id)}</span></td>
+        <td><span>${escapeHtml(order.remains || '0')}</span></td>
+        <td><span class="${badgeClass}">${escapeHtml(order.status)}</span></td>
         <td>-</td>
       `
       tbody.appendChild(tr)
@@ -506,7 +556,7 @@ async function populateDashboardStats(doc) {
   try {
     const token = localStorage.getItem('token')
     if (!token) return
-    const resp = await fetch('/api/orders', { headers: { Authorization: `Bearer ${token}` } })
+    const resp = await apiFetch('/api/orders', { headers: { Authorization: `Bearer ${token}` } })
     if (!resp.ok) return
     const data = await resp.json()
     if (!data.orders) return
@@ -545,6 +595,12 @@ function Page() {
     setHtml('')
     setPendingHtml('')
     setReady(false)
+
+    if (requiresAuthentication(window.location.pathname) && !localStorage.getItem('token')) {
+      window.history.replaceState({}, '', '/')
+      window.dispatchEvent(new PopStateEvent('popstate'))
+      return () => { cancelled = true }
+    }
 
     const urls = [`${SITE_ROOT}${source}`]
     if (!source.endsWith('.html') || source.split('/').length > 1) {
@@ -617,6 +673,12 @@ function Page() {
 
         // Replace hardcoded user data with actual logged-in user info
         const user = await fetchCurrentUser()
+        if (requiresAuthentication(window.location.pathname) && !user) {
+          localStorage.removeItem('token')
+          window.history.replaceState({}, '', '/')
+          window.dispatchEvent(new PopStateEvent('popstate'))
+          return
+        }
         if (user) replaceHardcodedData(document, user)
 
         // Replace USD prices with TZS (3x markup) in services tables
@@ -880,10 +942,11 @@ function Page() {
         const username = fields['RegistrationForm[login]'] || ''
         const email = fields['RegistrationForm[email]'] || ''
         const password = fields['RegistrationForm[password]'] || ''
-        fetch('/api/register', {
+        const password_confirmation = fields['RegistrationForm[password_again]'] || ''
+        apiFetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, email, password }),
+          body: JSON.stringify({ username, email, password, password_confirmation }),
         })
           .then((r) => r.json())
           .then((data) => {
@@ -903,7 +966,7 @@ function Page() {
       if (action.includes('login') || action.includes('services') || fields['LoginForm[username]'] !== undefined) {
         const email = fields['LoginForm[username]'] || ''
         const password = fields['LoginForm[password]'] || ''
-        fetch('/api/login', {
+        apiFetch('/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -930,7 +993,7 @@ function Page() {
           alert('Not authenticated')
           return
         }
-        fetch('/api/deposit', {
+        apiFetch('/api/deposit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -943,25 +1006,64 @@ function Page() {
             if (data.error) {
               alert(data.error)
             } else {
-              // Auto approve deposit locally
-              fetch(`/api/admin/deposit/${data.deposit_id}/approve`, {
-                method: 'POST',
-                headers: {
-                  'Authorization': 'Bearer ' + token
-                }
-              })
-                .then((r) => r.json())
-                .then((approveData) => {
-                  if (approveData.success) {
-                    alert(`Successfully deposited TSH ${amount.toLocaleString()}!`)
-                    window.location.reload()
-                  } else {
-                    alert('Deposit approval failed: ' + approveData.error)
-                  }
-                })
+              alert(`Deposit request #${data.deposit_id} submitted. It will be credited after payment confirmation.`)
+              window.location.reload()
             }
           })
           .catch((err) => alert('Deposit error: ' + err.message))
+        return
+      }
+
+      // Generate account API key
+      if (action.includes('newkey')) {
+        const token = localStorage.getItem('token')
+        apiFetch('/api/account/api-key', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + token },
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.error) return alert(data.error)
+            const keyField = document.querySelector('#api_key')
+            if (keyField) keyField.value = data.api_key
+            alert('New API key generated. Store it securely.')
+          })
+          .catch((err) => alert('API key error: ' + err.message))
+        return
+      }
+
+      // Change account password
+      if (fields['SettingsFrom[current_password]'] !== undefined) {
+        const token = localStorage.getItem('token')
+        apiFetch('/api/account/password', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({
+            current_password: fields['SettingsFrom[current_password]'],
+            password: fields['SettingsFrom[password]'],
+            confirm_password: fields['SettingsFrom[confirm_password]'],
+          }),
+        })
+          .then((r) => r.json())
+          .then((data) => data.error ? alert(data.error) : alert('Password changed successfully'))
+          .catch((err) => alert('Password change error: ' + err.message))
+        return
+      }
+
+      // Change account email
+      if (fields['ChangeEmailForm[email]'] !== undefined) {
+        const token = localStorage.getItem('token')
+        apiFetch('/api/account/email', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({
+            email: fields['ChangeEmailForm[email]'],
+            password: fields['ChangeEmailForm[password]'],
+          }),
+        })
+          .then((r) => r.json())
+          .then((data) => data.error ? alert(data.error) : alert('Email changed successfully'))
+          .catch((err) => alert('Email change error: ' + err.message))
         return
       }
 
@@ -975,7 +1077,7 @@ function Page() {
           alert('Not authenticated')
           return
         }
-        fetch('/api/order', {
+        apiFetch('/api/order', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
