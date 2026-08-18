@@ -592,7 +592,6 @@ function Page() {
   useEffect(() => {
     let cancelled = false
     setError('')
-    setHtml('')
     setPendingHtml('')
     setReady(false)
 
@@ -1116,9 +1115,9 @@ function Page() {
     }
   }, [ready, html])
 
-  if (error) return <main className="react-error"><h1>TechSMM</h1><p>{error}</p><a href="/">Return home</a></main>
-  if (!ready) return <main className="page-loading" aria-label="Loading page"><span>Loading…</span></main>
-  return <div id="body" className={`mirrored-page ${bodyClass}`} onClick={navigate} dangerouslySetInnerHTML={{ __html: html }} />
+  if (error && !html) return <main className="react-error"><h1>TechSMM</h1><p>{error}</p><a href="/">Return home</a></main>
+  if (!html) return <main className="page-loading" aria-label="Loading page"><span>Loading…</span></main>
+  return <div id="body" aria-busy={!ready} className={`mirrored-page ${bodyClass}`} onClick={navigate} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
 // Clean ugly URLs on load — redirect /techsmm.com/services.html/foo to /foo
