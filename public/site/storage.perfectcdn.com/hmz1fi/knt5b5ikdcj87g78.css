@@ -1802,7 +1802,7 @@ ul.pagination li a{
 }
 
 ul.pagination li.active a{
-    background: linear-gradient(233deg, #EF9F26 22.58%, #53DE78 88.75%);
+    background: linear-gradient(233deg, #d5f74c 22.58%, #b6d83f 88.75%);
 }
 
 .nightmode ul.pagination li a{
@@ -5802,7 +5802,7 @@ a.logout_btn {
 }
 
 #v2-banner .v2_banner_content h4 > span{
-    color: #FF9000;
+    color: #d5f74c;
 }
 
 #v2-banner .banner_image img{
@@ -5933,7 +5933,7 @@ a.logout_btn {
 }
 
 .signinForm .singin__essent p a{
-    color: #F99B21;
+    color: #d5f74c;
 }
 
 .signinForm .singin__essent .forgotPassword a{
@@ -6094,7 +6094,7 @@ a.logout_btn {
 .how-its-items .how-icons{
     width: 100px;
     height: 100px;
-    background: linear-gradient(to bottom, #4FE07A, #F99B21);
+    background: linear-gradient(to bottom, #d5f74c, #b6d83f);
     border-radius: 150px;
     display: flex;
     align-items: center;
@@ -6217,7 +6217,7 @@ a.logout_btn {
 
 #whyChooseUs{
     padding: 50px 0px;
-    background: linear-gradient(120deg, #4edf7aab -1.05%, #f89a20e7 100%),url(fgo8u5bmc64tlxu0.png), linear-gradient(120deg, #d5f74c -1.05%, #000 100%);
+    background: linear-gradient(120deg, #d5f74cab -1.05%, #000000e7 100%),url(fgo8u5bmc64tlxu0.png), linear-gradient(120deg, #d5f74c -1.05%, #000 100%);
     background-repeat: no-repeat;
     background-size: contain;
     background-position: left;
@@ -6320,7 +6320,7 @@ a.logout_btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(233deg, #EF9F26 22.58%, #53DE78 88.75%);
+    background: linear-gradient(233deg, #d5f74c 22.58%, #b6d83f 88.75%);
     border-radius: 50px;    
     color: var(--text-white);
     font-size: 20px;
