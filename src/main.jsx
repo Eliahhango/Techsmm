@@ -1032,8 +1032,7 @@ function Page() {
           .then((data) => {
             if (data.token) {
               localStorage.setItem('token', data.token)
-              window.history.pushState({}, '', '/')
-              window.dispatchEvent(new PopStateEvent('popstate'))
+              window.location.assign('/')
             } else {
               alert(data.error || 'Registration failed')
             }
@@ -1055,8 +1054,7 @@ function Page() {
           .then((data) => {
             if (data.token) {
               localStorage.setItem('token', data.token)
-              window.history.pushState({}, '', '/')
-              window.dispatchEvent(new PopStateEvent('popstate'))
+              window.location.assign('/')
             } else {
               alert(data.error || 'Login failed')
             }
