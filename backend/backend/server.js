@@ -92,6 +92,10 @@ if (!userColumns.includes('timezone')) {
   db.exec('ALTER TABLE users ADD COLUMN timezone INTEGER NOT NULL DEFAULT 10800');
 }
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS users_api_key_unique ON users(api_key) WHERE api_key IS NOT NULL');
+if (process.env.ADMIN_BOOTSTRAP_EMAIL) {
+  const promoted = db.prepare("UPDATE users SET role = 'admin' WHERE lower(email) = lower(?)").run(process.env.ADMIN_BOOTSTRAP_EMAIL.trim());
+  console.log(`Admin bootstrap updated ${promoted.changes} account(s).`);
+}
 
 // ─── Middleware ─────────────────────────────────────────────
 const allowedOrigins = new Set((process.env.CORS_ORIGINS || 'http://localhost:5173').split(',').map(origin => origin.trim()).filter(Boolean));
