@@ -4,6 +4,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://techsmm-api-production.up.railway.app/api/:path*"
+    },
+    {
       "source": "/((?!site/).*)",
       "destination": "/index.html"
     }
