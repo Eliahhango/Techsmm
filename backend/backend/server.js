@@ -522,6 +522,72 @@ app.get('/api/admin/audit-logs', adminMiddleware, (req, res) => {
   res.json({ logs });
 });
 
+app.get('/api/admin/overview', adminMiddleware, async (req, res) => {
+  try {
+    const days = Math.min(Math.max(Number(req.query.days) || 30, 1), 365);
+    const start = `-${days} days`;
+    const users = db.prepare(`
+      SELECT
+        COUNT(*) AS total,
+        SUM(CASE WHEN created_at >= datetime('now', ?) THEN 1 ELSE 0 END) AS new_count,
+        COALESCE(SUM(balance_tzs), 0) AS wallet_liability_tzs
+      FROM users
+    `).get(start);
+    const orders = db.prepare(`
+      SELECT
+        COUNT(*) AS total,
+        COALESCE(SUM(charge_tzs), 0) AS gross_charges_tzs,
+        COALESCE(SUM(charge_usd), 0) AS provider_cost_usd,
+        SUM(CASE WHEN status IN ('Pending', 'Processing', 'In progress') THEN 1 ELSE 0 END) AS open_count,
+        SUM(CASE WHEN status IN ('Failed', 'Error') THEN 1 ELSE 0 END) AS failed_count
+      FROM orders
+      WHERE created_at >= datetime('now', ?)
+    `).get(start);
+    const deposits = db.prepare(`
+      SELECT
+        SUM(CASE WHEN status = 'Pending' THEN 1 ELSE 0 END) AS pending_count,
+        COALESCE(SUM(CASE WHEN status = 'Pending' THEN amount_tzs ELSE 0 END), 0) AS pending_value_tzs,
+        COALESCE(SUM(CASE WHEN status = 'Approved' AND created_at >= datetime('now', ?) THEN amount_tzs ELSE 0 END), 0) AS approved_value_tzs
+      FROM deposits
+    `).get(start);
+    const audit = db.prepare("SELECT COUNT(*) AS total FROM audit_logs WHERE created_at >= datetime('now', ?)").get(start);
+    const exchangeRate = db.prepare('SELECT rate FROM exchange_rate WHERE id = 1').get()?.rate || 2500;
+    const estimatedProviderCostTzs = Number(orders.provider_cost_usd || 0) * exchangeRate;
+
+    let provider = { available: false, balance: null, currency: null, error: 'Provider API key is not configured' };
+    if (TECHSMM_KEY) {
+      try {
+        const providerResult = await techsmmAPI('balance');
+        const balance = Number(providerResult?.balance);
+        if (Number.isFinite(balance)) provider = { available: true, balance, currency: providerResult.currency || 'USD' };
+        else provider.error = 'Provider returned an invalid balance';
+      } catch (error) {
+        provider.error = 'Provider balance unavailable';
+        console.error('Provider balance lookup failed:', error.message);
+      }
+    }
+
+    res.json({
+      period_days: days,
+      users: { total: Number(users.total || 0), new_count: Number(users.new_count || 0), wallet_liability_tzs: Number(users.wallet_liability_tzs || 0) },
+      orders: {
+        total: Number(orders.total || 0),
+        gross_charges_tzs: Number(orders.gross_charges_tzs || 0),
+        estimated_provider_cost_tzs: Math.ceil(estimatedProviderCostTzs),
+        estimated_margin_tzs: Math.floor(Number(orders.gross_charges_tzs || 0) - estimatedProviderCostTzs),
+        open_count: Number(orders.open_count || 0),
+        failed_count: Number(orders.failed_count || 0),
+      },
+      deposits: { pending_count: Number(deposits.pending_count || 0), pending_value_tzs: Number(deposits.pending_value_tzs || 0), approved_value_tzs: Number(deposits.approved_value_tzs || 0) },
+      audit_events: Number(audit.total || 0),
+      provider,
+    });
+  } catch (error) {
+    console.error('Admin overview failed:', error.message);
+    res.status(500).json({ error: 'Unable to load admin overview' });
+  }
+});
+
 // Get deposit history
 app.get('/api/deposits', authMiddleware, (req, res) => {
   const deposits = db.prepare('SELECT * FROM deposits WHERE user_id = ? ORDER BY created_at DESC').all(req.user.id);

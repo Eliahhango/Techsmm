@@ -590,23 +590,26 @@ async function populateDashboardStats(doc) {
 async function populateAdminPage(doc) {
   const token = localStorage.getItem('token')
   const headers = { Authorization: `Bearer ${token}` }
-  const [usersResp, ordersResp, depositsResp, logsResp] = await Promise.all([
+  const [overviewResp, usersResp, ordersResp, depositsResp, logsResp] = await Promise.all([
+    apiFetch('/api/admin/overview?days=30', { headers }),
     apiFetch('/api/admin/users', { headers }),
     apiFetch('/api/admin/orders', { headers }),
     apiFetch('/api/admin/deposits', { headers }),
     apiFetch('/api/admin/audit-logs', { headers }),
   ])
-  const responses = [usersResp, ordersResp, depositsResp, logsResp]
+  const responses = [overviewResp, usersResp, ordersResp, depositsResp, logsResp]
   if (responses.some((response) => !response.ok)) throw new Error('Unable to load admin data')
-  const [users, orders, deposits, logs] = await Promise.all(responses.map((response) => response.json()))
+  const [overview, users, orders, deposits, logs] = await Promise.all(responses.map((response) => response.json()))
   const setAdminStat = (id, value) => {
     const element = doc.querySelector(`#${id}`)
     if (element) element.textContent = String(value)
   }
-  setAdminStat('admin-user-count', users.users?.length || 0)
-  setAdminStat('admin-order-count', orders.orders?.length || 0)
-  setAdminStat('admin-pending-count', deposits.deposits?.filter((deposit) => deposit.status === 'Pending').length || 0)
-  setAdminStat('admin-log-count', logs.logs?.length || 0)
+  setAdminStat('admin-user-count', overview.users?.total || 0)
+  setAdminStat('admin-order-count', overview.orders?.total || 0)
+  setAdminStat('admin-pending-count', overview.deposits?.pending_count || 0)
+  setAdminStat('admin-log-count', overview.audit_events || 0)
+  setAdminStat('admin-revenue', `TSH ${Number(overview.orders?.gross_charges_tzs || 0).toLocaleString()}`)
+  setAdminStat('admin-provider-balance', overview.provider?.available ? `${overview.provider.balance} ${overview.provider.currency}` : 'Unavailable')
 
   const userBody = doc.querySelector('#admin-users tbody')
   if (userBody) {
