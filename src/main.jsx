@@ -813,6 +813,11 @@ function Page() {
       toggleTheme()
     }
 
+    window.navToggleMob = function () {
+      const mobileNav = document.getElementById('navMob')
+      if (mobileNav) mobileNav.classList.toggle('active')
+    }
+
     function closeAllOffcanvas() {
       document.querySelectorAll('.offcanvas.show').forEach((oc) => oc.classList.remove('show'))
     }
@@ -847,6 +852,11 @@ function Page() {
       if (e.target.closest('.offcanvas .btn-close')) {
         e.preventDefault()
         closeAllOffcanvas()
+        return
+      }
+      const mobileNavLink = e.target.closest('#navMob a[href]')
+      if (mobileNavLink) {
+        document.getElementById('navMob')?.classList.remove('active')
         return
       }
       const menuLink = e.target.closest('.offcanvas .user_menu__item')
