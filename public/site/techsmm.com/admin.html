@@ -67,16 +67,16 @@
         <div class="role">Administrator</div>
       </div>
       <nav class="admin-nav">
-        <a class="active" href="/admin"><i class="fas fa-chart-line"></i><span>Overview</span></a>
-        <a href="/dashboard"><i class="fas fa-home"></i><span>User Dashboard</span></a>
-        <a href="/services"><i class="fas fa-layer-group"></i><span>Services</span></a>
-        <a href="/orders"><i class="fas fa-shopping-cart"></i><span>Orders</span></a>
-        <a href="/account"><i class="fas fa-user-cog"></i><span>Account</span></a>
-        <a href="/logout"><i class="fas fa-sign-out-alt"></i><span>Log out</span></a>
+        <a class="active" href="#admin-overview"><i class="fas fa-chart-line"></i><span>Overview</span></a>
+        <a href="#admin-users"><i class="fas fa-users"></i><span>Users</span></a>
+        <a href="#admin-orders"><i class="fas fa-shopping-cart"></i><span>Orders</span></a>
+        <a href="#admin-deposits"><i class="fas fa-wallet"></i><span>Deposits</span></a>
+        <a href="#admin-logs"><i class="fas fa-clipboard-list"></i><span>Audit logs</span></a>
+        <a href="/" data-admin-logout><i class="fas fa-sign-out-alt"></i><span>Log out</span></a>
       </nav>
     </aside>
     <section class="admin-main">
-      <header class="admin-topbar"><div><h1>Admin overview</h1><p>Monitor users, orders, deposits, and platform activity.</p></div><div class="admin-mark"><i class="fas fa-cog"></i></div></header>
+      <header id="admin-overview" class="admin-topbar"><div><h1>Admin overview</h1><p>Monitor users, orders, deposits, and platform activity.</p></div><div class="admin-mark"><i class="fas fa-cog"></i></div></header>
       <div class="admin-stat-grid">
         <div class="admin-stat"><div class="icon"><i class="fas fa-users"></i></div><div class="label">Total users</div><div id="admin-user-count" class="value">-</div></div>
         <div class="admin-stat"><div class="icon"><i class="fas fa-shopping-bag"></i></div><div class="label">Total orders</div><div id="admin-order-count" class="value">-</div></div>

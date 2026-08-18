@@ -932,6 +932,14 @@ function Page() {
           .catch((error) => alert('Approval error: ' + error.message))
         return
       }
+      const adminLogout = e.target.closest('[data-admin-logout]')
+      if (adminLogout) {
+        e.preventDefault()
+        localStorage.removeItem('token')
+        window.history.pushState({}, '', '/')
+        window.dispatchEvent(new PopStateEvent('popstate'))
+        return
+      }
       const mobileNavLink = e.target.closest('#navMob a[href]')
       if (mobileNavLink) {
         document.getElementById('navMob')?.classList.remove('active')
