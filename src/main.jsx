@@ -136,6 +136,10 @@ function replaceHardcodedData(doc, user) {
   if (accountFields[1]) accountFields[1].value = user.email || ''
   const currentEmail = doc.querySelector('#current-email')
   if (currentEmail) currentEmail.textContent = user.email || ''
+  const language = doc.querySelector('#language')
+  if (language && user.language) language.value = user.language
+  const timezone = doc.querySelector('#timezone')
+  if (timezone && user.timezone !== undefined) timezone.value = String(user.timezone)
 
   // 5. Replace fav_user_name in any remaining inline scripts
   doc.querySelectorAll('script').forEach((el) => {
@@ -1048,6 +1052,35 @@ function Page() {
             alert('New API key generated. Store it securely.')
           })
           .catch((err) => alert('API key error: ' + err.message))
+        return
+      }
+
+      // Revoke account API key
+      if (action.includes('revoke') || action.includes('deletekey')) {
+        const token = localStorage.getItem('token')
+        apiFetch('/api/account/api-key', {
+          method: 'DELETE',
+          headers: { Authorization: 'Bearer ' + token },
+        })
+          .then((r) => r.json())
+          .then((data) => data.error ? alert(data.error) : alert('API key revoked'))
+          .catch((err) => alert('API key error: ' + err.message))
+        return
+      }
+
+      // Save account language or timezone
+      if (fields['SettingsFrom[lang]'] !== undefined || fields['SettingsFrom[timezone]'] !== undefined) {
+        const token = localStorage.getItem('token')
+        const language = fields['SettingsFrom[lang]'] || document.querySelector('#language')?.value || 'en'
+        const timezone = Number(fields['SettingsFrom[timezone]'] || document.querySelector('#timezone')?.value || 10800)
+        apiFetch('/api/account/preferences', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+          body: JSON.stringify({ language, timezone }),
+        })
+          .then((r) => r.json())
+          .then((data) => data.error ? alert(data.error) : alert('Account preferences saved'))
+          .catch((err) => alert('Preferences error: ' + err.message))
         return
       }
 

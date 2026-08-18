@@ -29,6 +29,8 @@ db.exec(`
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
     balance_tzs REAL DEFAULT 0,
+    language TEXT NOT NULL DEFAULT 'en',
+    timezone INTEGER NOT NULL DEFAULT 10800,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
   CREATE TABLE IF NOT EXISTS orders (
@@ -82,6 +84,12 @@ if (!userColumns.includes('role')) {
 }
 if (!userColumns.includes('api_key')) {
   db.exec('ALTER TABLE users ADD COLUMN api_key TEXT');
+}
+if (!userColumns.includes('language')) {
+  db.exec("ALTER TABLE users ADD COLUMN language TEXT NOT NULL DEFAULT 'en'");
+}
+if (!userColumns.includes('timezone')) {
+  db.exec('ALTER TABLE users ADD COLUMN timezone INTEGER NOT NULL DEFAULT 10800');
 }
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS users_api_key_unique ON users(api_key) WHERE api_key IS NOT NULL');
 
@@ -299,7 +307,7 @@ app.post('/api/login', async (req, res) => {
 
 // Get current user
 app.get('/api/me', authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT id, username, email, balance_tzs, role, created_at FROM users WHERE id = ?').get(req.user.id);
+  const user = db.prepare('SELECT id, username, email, balance_tzs, language, timezone, role, created_at FROM users WHERE id = ?').get(req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json({ user });
 });
@@ -350,6 +358,35 @@ app.post('/api/account/api-key', authMiddleware, (req, res) => {
   } catch (e) {
     console.error('API key generation failed:', e.message);
     res.status(500).json({ error: 'Unable to generate API key' });
+  }
+});
+
+app.delete('/api/account/api-key', authMiddleware, (req, res) => {
+  try {
+    db.prepare('UPDATE users SET api_key = NULL WHERE id = ?').run(req.user.id);
+    db.prepare('INSERT INTO audit_logs (actor_user_id, action, entity_type) VALUES (?, ?, ?)')
+      .run(req.user.id, 'api_key.revoked', 'user');
+    res.json({ success: true });
+  } catch (e) {
+    console.error('API key revocation failed:', e.message);
+    res.status(500).json({ error: 'Unable to revoke API key' });
+  }
+});
+
+app.put('/api/account/preferences', authMiddleware, (req, res) => {
+  try {
+    const language = String(req.body.language || '').trim().toLowerCase();
+    const timezone = Number(req.body.timezone);
+    const supportedLanguages = new Set(['en', 'ru', 'tr', 'bp', 'ko', 'ar', 'bn']);
+    if (!supportedLanguages.has(language)) return res.status(400).json({ error: 'Unsupported language' });
+    if (!Number.isInteger(timezone) || timezone < -43200 || timezone > 50400 || timezone % 900 !== 0) {
+      return res.status(400).json({ error: 'Invalid timezone' });
+    }
+    db.prepare('UPDATE users SET language = ?, timezone = ? WHERE id = ?').run(language, timezone, req.user.id);
+    res.json({ success: true, language, timezone });
+  } catch (e) {
+    console.error('Account preferences update failed:', e.message);
+    res.status(500).json({ error: 'Unable to update account preferences' });
   }
 });
 
